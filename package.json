@@ -1,0 +1,25 @@
+{
+  "name": "jeefo",
+  "version": "0.0.1",
+  "description": "jeefo library",
+  "author": "jeefo",
+  "license": "MIT",
+  "main": "jeefo.min.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha specs",
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:je3f0o/jeefo.git"
+  },
+  "keywords": [
+    "jeefo"
+  ],
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "fs-extra": "^0.30.0",
+    "mocha": "^3.0.2",
+    "uglify-js": "^2.7.3"
+  }
+}
