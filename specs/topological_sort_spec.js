@@ -15,6 +15,8 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
+if (process.env.NODE_ENV === "production") { return; }
+
 var sort   = require("../source/topological_sort");
 var expect = require("expect");
 

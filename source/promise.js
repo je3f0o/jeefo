@@ -12,10 +12,10 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 /* exported */
 /* exported $q */
 
-var jeefo = require("../jeefo.min");
+var utils = require("./utils");
 var _Object = Object,
-	assign = jeefo.assign,
-	map = jeefo.map,
+	assign = utils.assign,
+	map = utils.map,
 	_undefined;
 
 //ignore:end

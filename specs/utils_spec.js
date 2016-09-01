@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils_spec.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,8 +15,10 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
-var jeefo  = require("../jeefo.min.js");
-var expect = require("expect");
+var jeefo_path = (process.env.NODE_ENV === "production") ? "../jeefo.min" : "../source/utils";
+
+var jeefo  = require(jeefo_path),
+	expect = require("expect");
 
 describe("Utils", function () {
 	describe("is_undefined", function () {

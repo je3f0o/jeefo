@@ -15,12 +15,12 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
-var jeefo = require("../jeefo.min"),
-	expect = require("expect");
+var expect      = require("expect"),
+	make_module = (process.env.NODE_ENV === "production") ? require("../jeefo.min").module : require("../source/module");
 
 describe("Module", function () {
 	
-	var module = jeefo.module("test"),
+	var module = make_module("test"),
 		num1   = Math.random(),
 		num2   = Math.random(),
 		total  = num1 + num2;
@@ -67,7 +67,7 @@ describe("Module", function () {
 	});
 
 	it("Should be inherit dependencies", function (done) {
-		var new_module = jeefo.module("new", ["test"]);
+		var new_module = make_module("new", ["test"]);
 		new_module.run(["sum_factory"], function (sum_factory) {
 			var result = sum_factory(num1, num2);
 			expect(result).toBe(total);

@@ -15,6 +15,8 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
+if (process.env.NODE_ENV === "production") { return; }
+
 var $q = require("../source/promise");
 var expect = require("expect");
 

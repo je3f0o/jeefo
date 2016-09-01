@@ -13,17 +13,19 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 /* exported module */
 /* exported */
 
-var jeefo = require("../jeefo.min"),
+var utils = require("./utils"),
 	make_injector = require("./injector"),
 
-is_undefined = jeefo.is_undefined,
-is_function = jeefo.is_function,
-assign = jeefo.assign,
-map = jeefo.map;
+is_undefined = utils.is_undefined,
+is_function = utils.is_function,
+assign = utils.assign,
+map = utils.map;
 
 var secure_property = function (o, p, v) {
 	o[p] = v;
 };
+
+var node_module = module;
 
 //ignore:end
 
@@ -156,3 +158,6 @@ var module = (function () {
 		return _module;
 	};
 }());
+//ignore:start
+node_module.exports = module;
+//ignore:end

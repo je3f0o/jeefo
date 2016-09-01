@@ -101,3 +101,25 @@ map = function () {
 		return assign(o, arg);
 	}, _Object.create(_null));
 };
+//ignore:start
+
+module.exports = {
+	is_undefined : is_undefined,
+	is_defined : is_defined,
+	is_null : is_null,
+	is_number : is_number,
+	is_string : is_string,
+	is_function : is_function,
+	is_boolean : is_boolean,
+	is_array : is_array,
+	is_object : is_object,
+	is_date : is_date,
+	is_regex : is_regex,
+	is_digit : is_digit,
+	map : map,
+	assign : assign
+};
+
+/* exported to_array, _Object */
+
+//ignore:end

@@ -1,12 +1,13 @@
 {
   "name": "jeefo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "jeefo library",
   "author": "jeefo",
   "license": "MIT",
   "main": "jeefo.min.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha specs",
+    "finaltest": "npm run build && NODE_ENV=production ./node_modules/mocha/bin/mocha specs",
     "build": "node build.js"
   },
   "repository": {

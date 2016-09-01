@@ -13,9 +13,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 /* exported */
 var $q               = require("./promise"),
-	jeefo            = require("../jeefo.min"),
+	utils            = require("./utils"),
 	topological_sort = require("./topological_sort"),
-	map = jeefo.map;
+	map = utils.map;
 
 //ignore:end
 

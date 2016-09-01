@@ -14,9 +14,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 /* exported topological_sort */
 
-var jeefo = require("../jeefo.min");
+var utils = require("./utils");
 var _Array = Array,
-	is_undefined = jeefo.is_undefined;
+	is_undefined = utils.is_undefined;
 
 //ignore:end
 
