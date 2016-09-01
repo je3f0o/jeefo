@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : topological_sort_spec.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -41,7 +41,7 @@ var expects = [
 ];
 
 describe("Topological sort", function () {
-	it("Should be sorted", function () {
+	it("Should be sorted", function (done) {
 		var result = sort("elements", function (name) {
 			return subscribers[name].dependencies;
 		}).every(function (value, index) {
@@ -49,5 +49,6 @@ describe("Topological sort", function () {
 		});
 
 		expect(result).toBe(true);
+		done();
 	});
 });

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -24,6 +24,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
  is_digit,
  map,
  assign,
+ sprintf,
 */
 
 /* exported to_array, _Object */
@@ -100,6 +101,29 @@ map = function () {
 	return to_array(arguments).reduce(function (o, arg) {
 		return assign(o, arg);
 	}, _Object.create(_null));
+},
+
+OBJECT_PROPERTY_PLACEHOLDER_REGEX = /{\s*([^{}]+)\s*}/g,
+INDEX_PLACEHOLDER_REGEX = /{\s*(\d+)\s*}/g,
+sprintf = function (str, args) {
+	var regex;
+	if (is_object(args) && ! is_array(args)) {
+		regex = OBJECT_PROPERTY_PLACEHOLDER_REGEX;
+	} else {
+		args  = to_array(arguments, 1);
+		regex = INDEX_PLACEHOLDER_REGEX;
+	}
+
+	return str.replace(regex, function(match, key) { 
+		key = key.trim();
+		var value = args[key];
+		if (is_function(value)) {
+			return value() || '';
+		} else if (is_defined(value)) {
+			return value;
+		}
+		return match;
+	});
 };
 //ignore:start
 
@@ -117,7 +141,8 @@ module.exports = {
 	is_regex : is_regex,
 	is_digit : is_digit,
 	map : map,
-	assign : assign
+	assign : assign,
+	sprintf : sprintf,
 };
 
 /* exported to_array, _Object */

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -14,11 +14,14 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 /* exported */
 
 var utils = require("./utils"),
+	$q = require("./promise"),
 	make_injector = require("./injector"),
 
 is_undefined = utils.is_undefined,
 is_function = utils.is_function,
+is_array = utils.is_array,
 assign = utils.assign,
+sprintf = utils.sprintf,
 map = utils.map;
 
 var secure_property = function (o, p, v) {
@@ -102,17 +105,25 @@ var module = (function () {
 		extend_property(this, _module.injector, name, injectable);
 	});
 
-	return function (name, requires) {
+	var make_module = function (name, requires) {
 		var _module = map();
-		requires = requires || [];
 
 		lazy_resolve_sync(_module, modules_injector, name, {
-			dependencies : requires,
+			dependencies : requires.concat(),
 			fn           : function () {
 				var injector = make_injector(),
 					results  = injector.results,
 					protos   = map(),
 					i, key, required_module, required_injector, proto_name;
+
+				// CORE INJECTORS
+				if (requires.length === 0) {
+					injector.register("$q", {
+						fn           : function () { return $q; },
+						dependencies : [],
+						resolve_once : true,
+					});
+				}
 
 				// public $injector
 				injector.name  = name;
@@ -148,6 +159,7 @@ var module = (function () {
 					protos   : protos,
 					requires : requires,
 					injector : injector,
+					instance : _module,
 				});
 			}
 		});
@@ -156,6 +168,14 @@ var module = (function () {
 		secure_property(_module, "extend", extend_function);
 
 		return _module;
+	};
+
+	return function (name, requires) {
+		if (is_array(requires)) {
+			return make_module(name, requires);
+		}
+
+		return modules_injector.resolve_sync(null, name).instance;
 	};
 }());
 //ignore:start

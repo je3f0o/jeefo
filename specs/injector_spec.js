@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector_spec.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,11 +15,17 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
-if (process.env.NODE_ENV === "production") { return; }
+var expect = require("expect"), $q, make_injector;
 
-var $q            = require("../source/promise"),
-	expect        = require("expect"),
+if (process.env.NODE_ENV === "production") {
+	var jeefo_mock = require("./jeefo_mock");
+	
+	$q            = jeefo_mock.module("test").get("$q");
+	make_injector = jeefo_mock.make_injector;
+} else {
+	$q            = require("../source/promise");
 	make_injector = require("../source/injector");
+}
 
 describe("Injector", function () {
 

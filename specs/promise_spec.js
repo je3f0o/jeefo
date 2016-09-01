@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise_spec.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,14 +15,20 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
-if (process.env.NODE_ENV === "production") { return; }
+var expect = require("expect"), $q;
 
-var $q = require("../source/promise");
-var expect = require("expect");
+if (process.env.NODE_ENV === "production") {
+	var jeefo_mock = require("./jeefo_mock");
+	var test_module = jeefo_mock.module("test");
+
+	$q = test_module.get("$q");
+} else {
+	$q = require("../source/promise");
+}
 
 describe("Promise", function () {
 
-	it("Should be thenable", function () {
+	it("Should be thenable", function (done) {
 		var numbers  = [1,2,3,4,5],
 			deferred = $q.defer();
 
@@ -34,6 +40,7 @@ describe("Promise", function () {
 
 		result.then(function (total) {
 			expect(total).toBe(15);
+			done();
 		});
 
 		deferred.resolve(0);
@@ -68,7 +75,7 @@ describe("Promise", function () {
 		});
 	});
 
-	it("Should be thenable after resolved", function () {
+	it("Should be thenable after resolved", function (done) {
 		var defers = [],
 			result = $q.defer();
 
@@ -85,11 +92,12 @@ describe("Promise", function () {
 			});
 		}, result.promise).then(function (total) {
 			expect(total).toBe(15);
+			done();
 		});
 	});
 
 	describe("when", function () {
-		it("Should be immidiate return value 'when' is not promise", function () {
+		it("Should be immidiate return value 'when' is not promise", function (done) {
 			var obj = {};
 
 			$q.when(123).then(function (value) {
@@ -97,9 +105,10 @@ describe("Promise", function () {
 			});
 
 			expect(obj.value).toBe(123);
+			done();
 		});
 
-		it("Should be obj.value is set in this CPU cycle", function () {
+		it("Should be obj.value is set in this CPU cycle", function (done) {
 			var obj = {}, deferred = $q.defer();
 			var value = Math.random();
 
@@ -109,10 +118,11 @@ describe("Promise", function () {
 
 			deferred.resolve(value);
 			expect(obj.value).toBe(value);
+			done();
 		});
 	});
 
-	it("Should be return values after all promises resolved", function () {
+	it("Should be return values after all promises resolved", function (done) {
 		var defers = [], promises = [], deferred;
 
 		for (var i = 1, i_length = 5; i <= i_length; ++i) {
@@ -126,6 +136,7 @@ describe("Promise", function () {
 				return value === index + 1;
 			});
 			expect(result).toBe(true);
+			done();
 		});
 
 		defers.forEach(function (deferred, index) {
@@ -133,7 +144,7 @@ describe("Promise", function () {
 		});
 	});
 
-	it("Should be return values after all promises resolved, mixed promises", function () {
+	it("Should be return values after all promises resolved, mixed promises", function (done) {
 		var defers = [], promises = [], deferred;
 
 		for (var i = 0, i_length = 5; i < i_length; ++i) {
@@ -151,6 +162,7 @@ describe("Promise", function () {
 				return value === (index % 2 ? "even" : "odd");
 			});
 			expect(result).toBe(true);
+			done();
 		});
 
 		defers.forEach(function (deferred) {

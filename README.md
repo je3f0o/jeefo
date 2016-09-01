@@ -1,8 +1,8 @@
 # jeefo
-Very small javacript library for scaleable big frameworks server and client side. Docs coming soon as possible.
+Very small javacript library for scaleable big frameworks, server and client side. Docs coming as soon as possible.
 
 # Installation
-
+Install with NPM
 ```sh
 $ npm install jeefo
 ```
@@ -27,7 +27,9 @@ $ npm test
 ```
 
 #### Final test
-It will be build and test against minified filal source code. Only 'Public API'.
+It will be build and test against minified final source code. Only 'Public API'.
 ```sh
 $ npm run finaltest
 ```
+
+# License MIT

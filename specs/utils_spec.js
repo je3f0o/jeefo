@@ -15,6 +15,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 //ignore:end
 
+// TODO: add sprintf test
 var jeefo_path = (process.env.NODE_ENV === "production") ? "../jeefo.min" : "../source/utils";
 
 var jeefo  = require(jeefo_path),
