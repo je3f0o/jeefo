@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-02
+* Updated at  : 2016-11-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -27,20 +27,20 @@ _._._._._._._._._._._._._._._._._._._._._.*/
  sprintf,
 */
 
-/* exported to_array, _Object */
+/* exported to_array, TEMP */
 
 //ignore:end
 
-var toString = ({}).toString,
-_Object = Object,
-_Array = Array,
-_null = null,
-_undefined,
+var NULL      = null,
+	ARRAY     = Array,
+	OBJECT    = Object,
+	slice     = [].slice,
+	to_string = ({}).toString,
+	TEMP,
+	UNDEFINED,
 
 to_array = function (args, index) {
-	// do not miss we are using call method.
-	// it is just wrapper method for slice.call
-	return [].slice.call(args, index);
+	return slice.call(args, index);
 },
 
 compare_typeof_curry = function (type) {
@@ -50,15 +50,15 @@ compare_typeof_curry = function (type) {
 },
 
 is_undefined = function (value) {
-	return value === _undefined;
+	return value === UNDEFINED;
 },
 
 is_defined = function (value) {
-	return value !== _undefined;
+	return value !== UNDEFINED;
 },
 
 is_null = function (value) {
-	return value === null;
+	return value === NULL;
 },
 
 is_number   = compare_typeof_curry("number"),
@@ -66,18 +66,18 @@ is_string   = compare_typeof_curry("string"),
 is_boolean  = compare_typeof_curry("boolean"),
 is_function = compare_typeof_curry("function"),
 
-is_array = _Array.isArray,
+is_array = ARRAY.isArray,
 
 is_object = function (value) {
 	return ! is_null(value) && typeof value === "object";
 },
 
 is_date = function (value) {
-	return toString.call(value) === "[object Date]";
+	return to_string.call(value) === "[object Date]";
 },
 
 is_regex = function (value) {
-	return toString.call(value) === "[object RegExp]";
+	return to_string.call(value) === "[object RegExp]";
 },
 
 is_digit = function (value) {
@@ -85,22 +85,13 @@ is_digit = function (value) {
 },
 
 assign = function () {
-	return _Object.assign.apply(_null, to_array(arguments));
+	return OBJECT.assign.apply(NULL, arguments);
 },
 
 map = function () {
-	/*
-	 * few characters long, but maybe faster
-	 *
-	var o = _Object.create(_null);
-	for (var i = 0, args = arguments, i_length = args.length; i < i_length; ++i) {
-		assign(o, args[i]);
-	}
-	return o;
-	*/
-	return to_array(arguments).reduce(function (o, arg) {
-		return assign(o, arg);
-	}, _Object.create(_null));
+	var args = to_array(arguments);
+	args.unshift(OBJECT.create(NULL));
+	return assign.apply(NULL, args);
 },
 
 OBJECT_PROPERTY_PLACEHOLDER_REGEX = /{\s*([^{}]+)\s*}/g,

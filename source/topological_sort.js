@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : topological_sort.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-11-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -14,18 +14,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 /* exported topological_sort */
 
-var utils = require("./utils");
-var _Array = Array,
-	is_undefined = utils.is_undefined;
+require("./prototype_extends.js");
 
 //ignore:end
-
-var p = _Array.prototype;
-if (is_undefined(p.exists)) {
-	p.exists = function (value) {
-		return this.indexOf(value) >= 0;
-	};
-}
 
 var topological_sort = function (_name, callback) {
 	var sorted  = [], // sorted list of IDs ( returned value )

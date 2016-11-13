@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -17,21 +17,21 @@ var _package = require("./package");
 var VERSION      = _package.version,
 	LIBRARY_NAME = _package.name;
 
-var header = "/*\n jeefo v__VERSION__\n (c) 2016 jeefo <je3f0o@gmail.com>. https://github.com/je3f0o/jeefo\n License: MIT\n*/\n".
+var header = "/*\n jeefo v__VERSION__\n Copyright (c) 2016 jeefo <je3f0o@gmail.com>, https://github.com/je3f0o/jeefo\n License: MIT\n*/\n".
 	replace("__VERSION__", VERSION);
 
 var IGNORE_REGEX = /\/\/ignore\:start(?:(?!\/\/ignore\:end)[.\s\S])+.*\n/ig;
 var EXPORT_REGEX = /\/\*\s*exported\s?([^*]+)\*\//i;
 
-var universal_module_definition = function (scope, factory) {
+var universal_module_definition = function (factory) {
 	// jshint strict:false
 	if (typeof exports === "object") {
 		module.exports = factory();
 	} else {
-		scope.LIBRARY_NAME = factory();
+		window.LIBRARY_NAME = factory();
 	}
 }.toString().replace("LIBRARY_NAME", LIBRARY_NAME);
-var compiled_source = '(MODULE(this, function () { "use strict";\n\n__SOURCE__\nreturn {\n__EXPORTS__\n};\n\n}));'.
+var compiled_source = '(MODULE(function () { "use strict";\n\n__SOURCE__\nreturn {\n__EXPORTS__\n};\n\n}));'.
 	replace("MODULE", universal_module_definition);
 
 var get_filesize  = function (path) {

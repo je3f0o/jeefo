@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-09-01
+* Updated at  : 2016-11-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -12,11 +12,11 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 /* exported */
 /* exported $q */
 
-var utils = require("./utils");
-var _Object = Object,
+var utils  = require("./utils");
+var OBJECT = Object,
 	assign = utils.assign,
-	map = utils.map,
-	_undefined;
+	map    = utils.map,
+	UNDEFINED;
 
 //ignore:end
 
@@ -25,7 +25,7 @@ var RESOLVED_STATUS = "resolved";
 var REJECTED_STATUS = "rejected";
 
 var secure_property = function (object, key, value) {
-	_Object.defineProperty(object, key, {
+	OBJECT.defineProperty(object, key, {
 		value        : value,
 		writable     : false,
 		configurable : false
@@ -80,7 +80,7 @@ var make_defer = function () {
 					_value.then(pending[i][0]);
 				}
 
-				pending = _undefined;
+				pending = UNDEFINED;
 			}
 		},
 		reject : function (reason) {

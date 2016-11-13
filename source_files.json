@@ -1,5 +1,6 @@
 [
 	"source/utils.js",
+	"source/prototype_extends.js",
 	"source/topological_sort.js",
 	"source/promise.js",
 	"source/injector.js",
