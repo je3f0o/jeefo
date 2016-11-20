@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-11-14
+* Updated at  : 2016-11-20
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -25,9 +25,10 @@ _._._._._._._._._._._._._._._._._._._._._.*/
  map,
  assign,
  sprintf,
+ args_to_array,
 */
 
-/* exported to_array, TEMP */
+/* exported TEMP */
 
 //ignore:end
 
@@ -39,7 +40,7 @@ var NULL      = null,
 	TEMP,
 	UNDEFINED,
 
-to_array = function (args, index) {
+args_to_array = function (args, index) {
 	return slice.call(args, index);
 },
 
@@ -84,12 +85,43 @@ is_digit = function (value) {
 	return /^\-?\d+$/.test(value);
 },
 
-assign = function () {
-	return OBJECT.assign.apply(NULL, arguments);
-},
+assign = (function () {
+	if (is_undefined(OBJECT.assign)) {
+		var object_assign = function (destination, source) {
+			OBJECT.keys(source).forEach(function (key) {
+				destination[key] = source[key];
+			});
+		};
+
+		OBJECT.assign = function (destination) {
+			// We must check against these specific cases.
+			if (is_undefined(destination) || is_null(destination)) {
+				throw new TypeError("Cannot convert undefined or null to object");
+			}
+
+			for (var index = 1, source, key; (source = arguments[index++]);) {
+				if (is_defined(source) && ! is_null(source)) {
+					if (source.hasOwnProperty) {
+						object_assign(destination, source);
+					} else {
+						for (key in source) {
+							destination[key] = source[key];
+						}
+					}
+				}
+			}
+
+			return destination;
+		};
+	}
+
+	return function () {
+		return OBJECT.assign.apply(NULL, arguments);
+	};
+}()),
 
 map = function () {
-	var args = to_array(arguments);
+	var args = args_to_array(arguments);
 	args.unshift(OBJECT.create(NULL));
 	return assign.apply(NULL, args);
 },
@@ -101,7 +133,7 @@ sprintf = function (str, args) {
 	if (is_object(args) && ! is_array(args)) {
 		regex = OBJECT_PROPERTY_PLACEHOLDER_REGEX;
 	} else {
-		args  = to_array(arguments, 1);
+		args  = args_to_array(arguments, 1);
 		regex = INDEX_PLACEHOLDER_REGEX;
 	}
 
@@ -136,6 +168,6 @@ module.exports = {
 	sprintf : sprintf,
 };
 
-/* exported to_array, _Object */
+/* exported */
 
 //ignore:end
