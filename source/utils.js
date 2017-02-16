@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2016-11-20
+* Updated at  : 2017-02-16
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -25,6 +25,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
  map,
  assign,
  sprintf,
+ json_parse,
  args_to_array,
 */
 
@@ -147,6 +148,13 @@ sprintf = function (str, args) {
 		}
 		return match;
 	});
+},
+
+json_parse = function (value) {
+	try {
+		return JSON.parse(value);
+	} catch (e) {}
+	return null;
 };
 //ignore:start
 
@@ -166,6 +174,7 @@ module.exports = {
 	map : map,
 	assign : assign,
 	sprintf : sprintf,
+	json_parse : json_parse,
 };
 
 /* exported */
