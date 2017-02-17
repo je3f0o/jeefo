@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-02-16
+* Updated at  : 2017-02-18
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -22,6 +22,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
  is_date,
  is_regex,
  is_digit,
+ is_digit_int,
  map,
  assign,
  sprintf,
@@ -82,8 +83,16 @@ is_regex = function (value) {
 	return to_string.call(value) === "[object RegExp]";
 },
 
-is_digit = function (value) {
-	return /^\-?\d+$/.test(value);
+is_digit = function (value, is_unsigned) {
+	// SIGNED_DIGITS       = /^\-?\d+(?:.\d+)?$/
+	// UNSIGNED_DIGITS     = /^\d+(?:.\d+)?$/
+	return (is_unsigned ? /^\d+(?:.\d+)?$/ : /^\-?\d+(?:.\d+)?$/).test(value);
+},
+
+is_digit_int = function (value, is_unsigned) {
+	// SIGNED_DIGITS_INT   = /^\-?\d+$/
+	// UNSIGNED_DIGITS_INT = /^\d+$/
+	return (is_unsigned ? /^\d+$/ : /^\-?\d+$/).test(value);
 },
 
 assign = (function () {
@@ -171,6 +180,7 @@ module.exports = {
 	is_date : is_date,
 	is_regex : is_regex,
 	is_digit : is_digit,
+	is_digit_int : is_digit_int,
 	map : map,
 	assign : assign,
 	sprintf : sprintf,

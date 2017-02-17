@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils_spec.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-02-16
+* Updated at  : 2017-02-18
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -124,13 +124,44 @@ describe("Utils", function () {
 
 	// is_digit {{{3
 	describe("is_digit", function () {
-		it("Should be true when [string] looks like positive number", function () {
+		it("Should be true when [string] looks like positive int number", function () {
 			expect(jeefo.is_digit("123")).toBe(true);
 		});
-		it("Should be true when [string] looks like negative number", function () {
+		it("Should be true when [string] looks like negative int number", function () {
 			expect(jeefo.is_digit("-123")).toBe(true);
 		});
-		it("Should not be true [string] malformed", function () {
+		it("Should be false when [string] looks like negative int number and unsigned flag set", function () {
+			expect(jeefo.is_digit("-123", true)).toBe(false);
+		});
+		it("Should be true when [string] looks like positive float number", function () {
+			expect(jeefo.is_digit("3.14")).toBe(true);
+		});
+		it("Should be true when [string] looks like negative float number", function () {
+			expect(jeefo.is_digit("-3.14")).toBe(true);
+		});
+		it("Should be false when [string] looks like negative float number and unsigned flag set", function () {
+			expect(jeefo.is_digit("-3.14", true)).toBe(false);
+		});
+		it("Should be false [string] malformed", function () {
+			expect(jeefo.is_digit("--123")).toBe(false);
+			expect(jeefo.is_digit("123s")).toBe(false);
+			expect(jeefo.is_digit("--3.14")).toBe(false);
+			expect(jeefo.is_digit("3.14s")).toBe(false);
+		});
+	});
+
+	// is_digit_int {{{3
+	describe("is_digit_int", function () {
+		it("Should be true when [string] looks like positive int number", function () {
+			expect(jeefo.is_digit("123")).toBe(true);
+		});
+		it("Should be true when [string] looks like negative int number", function () {
+			expect(jeefo.is_digit("-123")).toBe(true);
+		});
+		it("Should be false when [string] looks like negative int number and unsigned flag set", function () {
+			expect(jeefo.is_digit("-123", true)).toBe(false);
+		});
+		it("Should be false [string] malformed", function () {
 			expect(jeefo.is_digit("--123")).toBe(false);
 			expect(jeefo.is_digit("123s")).toBe(false);
 		});
@@ -142,13 +173,14 @@ describe("Utils", function () {
 		var o2 = { e : 1, f : 2, g : 3 };
 		var m = jeefo.map(o, null, undefined, o2);
 
-		it("Should be new object merged objects", function () {
+		it("Should be new object instance", function () {
+			expect(m !== o).toBe(true);
+		});
+		it("Should be same property and values", function () {
 			Object.assign(o, o2);
 			var result = ['a', 'b', 'c', 'e', 'f', 'g'].every(function (p) {
 				return m[p] === o[p];
 			});
-
-			expect(result !== o).toBe(true);
 			expect(result).toBe(true);
 		});
 	});
