@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2016",
   "description": "jeefo library",
@@ -34,8 +34,5 @@
       "comparisons": false
     },
     "fromString": true
-  },
-  "dependencies": {
-    "flow-typed": "^2.1.2"
   }
 }

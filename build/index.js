@@ -49,18 +49,9 @@ var header = header_compiler({
 	Copyright       : _package.copyright
 });
 
-var browser_exporter = function (factory) {
-	window.jeefo = factory();
-};
-
-var browser_source = `(${ browser_exporter.toString() }(function () { "use strict";\n\n${ source }\n\n}));`;
+var browser_source = `(function () {"use strict";var jeefo=(function(){ ${ source } }()); window.jeefo = jeefo.clear(); }());`;
 var node_source    = `${ header }\n"use strict";\n\nmodule.exports = (function () {\n\n${ source }\n\n}());`;
-source = browser_source;
 var node_min_source;
-
-console.log(source);
-
-//console.log(source);
 
 browser_source  = header + uglify.minify(browser_source, _package.uglify_config).code;
 node_min_source = header + uglify.minify(node_source, _package.uglify_config).code;
@@ -72,7 +63,7 @@ var node_min_filename = path.resolve(__dirname, `../dist/${ _package.name }.node
 var browser_filename  = path.resolve(__dirname, `../dist/${ _package.name }.min.js`);
 
 
-fse.outputFileSync(output_filename, source);
+fse.outputFileSync(output_filename, `${ header }\n\n${ source }`);
 fse.outputFileSync(node_filename, node_source);
 fse.outputFileSync(node_min_filename, node_min_source);
 fse.outputFileSync(browser_filename, browser_source);
