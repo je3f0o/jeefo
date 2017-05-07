@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.10
+ * jeefo     : v0.0.12
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -631,7 +631,7 @@ Jeefo.prototype = {
 		} else if (! MODULES.hasOwnProperty(name)) {
 			min_error("'" + name + "' module is not found.");
 		}
-		return MODULES[name];
+		return MODULES[name].instance;
 	},
 };
 

@@ -28,7 +28,7 @@ Jeefo.prototype = {
 		} else if (! MODULES.hasOwnProperty(name)) {
 			min_error(`'${ name }' module is not found.`);
 		}
-		return MODULES[name];
+		return MODULES[name].instance;
 	},
 };
 
