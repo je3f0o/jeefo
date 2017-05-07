@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-07
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -28,6 +28,7 @@ is_object = function (value) {
 //ignore:end
 
 var ARRAY = Array,
+is_array = ARRAY.isArray,
 object_keys = Object.keys,
 assign = function (destination) {
 	for (var i = 1, source, keys, j; i < arguments.length; ++i) {

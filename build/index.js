@@ -49,7 +49,7 @@ var header = header_compiler({
 	Copyright       : _package.copyright
 });
 
-var browser_source = `(function () {"use strict";var jeefo=(function(){ ${ source } }()); window.jeefo = jeefo.clear(); }());`;
+var browser_source = `(function () {"use strict";var jeefo=(function(){ ${ source } }()); window.jeefo = jeefo.create(); }());`;
 var node_source    = `${ header }\n"use strict";\n\nmodule.exports = (function () {\n\n${ source }\n\n}());`;
 var node_min_source;
 

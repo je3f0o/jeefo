@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : jeefo.js
 * Created at  : 2017-05-06
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-07
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -22,7 +22,14 @@ Jeefo.prototype = {
 	use : function (middleware) {
 		middleware(this);
 	},
-	module : make_module,
+	module : function (name, requires) {
+		if (is_array(requires)) {
+			return make_module(name, requires);
+		} else if (! MODULES.hasOwnProperty(name)) {
+			min_error(`'${ name }' module is not found.`);
+		}
+		return MODULES[name];
+	},
 };
 
 return {

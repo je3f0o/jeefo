@@ -24,8 +24,6 @@ var IS_FUNCTION  = PP.define("IS_FUNCTION"  , function (x) { return typeof x ===
 var IS_UNDEFINED = PP.define("IS_UNDEFINED" , function (x) { return typeof x === "undefined"; }, true);
 */
 
-var object_keys = Object.keys;
-
 var $q               = require("./promise"),
 	utils            = require("./utils"),
 	assign           = utils.assign,
@@ -125,9 +123,9 @@ var empty_dependencies = { dependencies : [] };
 var default_injectors = {
 	values : {
 		$q                  : $q,
-		Array               : Array,
+		"Array"             : ARRAY,
 		Injector            : JeefoInjector,
-		is_array            : Array.is_array,
+		is_array            : is_array,
 		"object.keys"       : object_keys,
 		"object.assign"     : assign,
 		make_injectable     : make_injectable,
@@ -135,7 +133,7 @@ var default_injectors = {
 	},
 	definitions : {
 		$q                  : empty_dependencies,
-		Array               : empty_dependencies,
+		"Array"             : empty_dependencies,
 		Injector            : empty_dependencies,
 		is_array            : empty_dependencies,
 		"object.keys"       : empty_dependencies,

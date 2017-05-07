@@ -10,13 +10,14 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-07
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 
 var ARRAY = Array,
+is_array = ARRAY.isArray,
 object_keys = Object.keys,
 assign = function (destination) {
 	for (var i = 1, source, keys, j; i < arguments.length; ++i) {
@@ -503,9 +504,9 @@ var empty_dependencies = { dependencies : [] };
 var default_injectors = {
 	values : {
 		$q                  : $q,
-		Array               : Array,
+		"Array"             : ARRAY,
 		Injector            : JeefoInjector,
-		is_array            : Array.is_array,
+		is_array            : is_array,
 		"object.keys"       : object_keys,
 		"object.assign"     : assign,
 		make_injectable     : make_injectable,
@@ -513,7 +514,7 @@ var default_injectors = {
 	},
 	definitions : {
 		$q                  : empty_dependencies,
-		Array               : empty_dependencies,
+		"Array"             : empty_dependencies,
 		Injector            : empty_dependencies,
 		is_array            : empty_dependencies,
 		"object.keys"       : empty_dependencies,
@@ -612,7 +613,7 @@ var make_module = function (module_name, requires) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : jeefo.js
 * Created at  : 2017-05-06
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-07
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -624,7 +625,14 @@ Jeefo.prototype = {
 	use : function (middleware) {
 		middleware(this);
 	},
-	module : make_module,
+	module : function (name, requires) {
+		if (is_array(requires)) {
+			return make_module(name, requires);
+		} else if (! MODULES.hasOwnProperty(name)) {
+			min_error("'" + name + "' module is not found.");
+		}
+		return MODULES[name];
+	},
 };
 
 return {
