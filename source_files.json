@@ -1,8 +1,8 @@
 [
-	"source/utils.js",
-	"source/prototype_extends.js",
-	"source/topological_sort.js",
-	"source/promise.js",
-	"source/injector.js",
-	"source/module.js"
+	"src/utils.js",
+	"src/topological_sort.js",
+	"src/promise.js",
+	"src/injector.js",
+	"src/module.js",
+	"src/jeefo.js"
 ]

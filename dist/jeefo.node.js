@@ -1,0 +1,639 @@
+/**
+ * jeefo     : v0.0.9
+ * Author    : je3f0o, <je3f0o@gmail.com>
+ * Homepage  : https://github.com/je3f0o/jeefo
+ * License   : The MIT License
+ * Copyright : 2016
+ **/
+
+"use strict";
+
+module.exports = (function () {
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : utils.js
+* Created at  : 2016-09-01
+* Updated at  : 2017-05-06
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+var ARRAY = Array,
+object_keys = Object.keys,
+assign = function (destination) {
+	for (var i = 1, source, keys, j; i < arguments.length; ++i) {
+		if ((source = arguments[i])) {
+			for (keys = object_keys(source), j = keys.length - 1; j >= 0; --j) {
+				destination[keys[j]] = source[keys[j]];
+			}
+		}
+	}
+
+	return destination;
+},
+min_error = function (message) {
+	throw new Error(message);
+};
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : topological_sort.js
+* Created at  : 2016-09-01
+* Updated at  : 2017-05-06
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+// Topological sort {{{1
+
+var topological_sort = function (name, callback) {
+	var sorted = [], visited = {};
+
+	(function visit (_name, _ancestors) {
+		var i            = _ancestors.length - 1,
+			ancestors    = new ARRAY(i + 1),
+			dependencies = callback(_name);
+
+		// jshint curly : false
+		for (ancestors[i] = _ancestors[i]; i >= 0; ancestors[i] = _ancestors[i], --i);
+		// jshint curly : true
+
+		ancestors.push(_name);
+		visited[_name] = true;
+
+		for (i = 0; i < dependencies.length; ++i) {
+			if (ancestors.indexOf(dependencies[i]) >= 0) { // if already in ancestors, a closed chain exists.
+				min_error("Circular dependency '" + dependencies[i] + " is required by '" + name + "' : " + ancestors.join(" -> "));
+			}
+
+			// if already exists, do nothing
+			if (! visited.hasOwnProperty(dependencies[i])) {
+				visit(dependencies[i], ancestors); // recursive call
+			}
+		}
+
+		if (sorted.indexOf(_name) === -1) {
+			sorted.push(_name);
+		}
+	}(name, []));
+
+	return sorted;
+};
+// }}}1
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : promise.js
+* Created at  : 2016-09-01
+* Updated at  : 2017-05-06
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+// JeefoPromise {{{1
+var JeefoPromise = function (promise_handler) {
+	var state           = 0,
+		pendings        = [],
+		instance        = this,
+		pendings_length = 0, result;
+
+	instance.then       = then;
+	instance.state      = "pending...";
+	instance.is_pending = is_pending;
+
+	// Promise handler {{{2
+	promise_handler(function (value) {
+		if (state !== 0) { return; }
+
+		state          = 1;
+		instance.state = "resolved";
+		instance.value = result = value;
+
+		for (var i = 0; i < pendings_length; i += 4) {
+			value = pendings[i](result);
+
+			if (value && value.type === "JEEFO_PROMISE") {
+				value.then(pendings[i + 2], pendings[i + 3]);
+			} else {
+				pendings[i + 2](value);
+			}
+		}
+		pendings        = null;
+		pendings_length = 0;
+	}, function (reason) {
+		if (state !== 0) { return; }
+
+		state           = 2;
+		instance.state  = "rejected";
+		instance.reason = result = reason;
+
+		for (var i = 1; i < pendings_length; i += 4) {
+			reason = pendings[i](result);
+
+			if (reason && reason.type === "JEEFO_PROMISE") {
+				reason.then(pendings[i + 1], pendings[i + 2]);
+			} else {
+				pendings[i + 2](reason);
+			}
+		}
+		pendings        = null;
+		pendings_length = 0;
+	});
+	// }}}2
+
+	// jshint latedef : false
+	return instance;
+
+	// Is pending ? {{{2
+	function is_pending () {
+		return state === 0;
+	}
+
+	// Then {{{2
+	function then (resolver, rejector) {
+		return new JeefoPromise(function (next_resolver, next_rejector) {
+			switch (state) {
+				case 1 :
+					return next_resolver(resolver(result));
+				case 2 :
+					return next_rejector(rejector(result));
+				default:
+					pendings[pendings_length    ] = resolver;
+					pendings[pendings_length + 1] = rejector;
+					pendings[pendings_length + 2] = next_resolver;
+					pendings[pendings_length + 3] = next_rejector;
+					pendings_length += 4;
+			}
+		});
+	}
+	// }}}2
+	// jshint latedef : true
+};
+JeefoPromise.prototype.type = "JEEFO_PROMISE";
+
+// Q {{{1
+var $q = {
+	defer : function () {
+		var deferred = {};
+		deferred.promise = new JeefoPromise(function (resolve, reject) {
+			deferred.resolve = resolve;
+			deferred.reject  = reject;
+		});
+		return deferred;
+	},
+	when  : function (value) {
+		// jshint latedef : false
+		if (value && value.type === "JEEFO_PROMISE") {
+			return value;
+		}
+
+		return new JeefoPromise(function (resolve) {
+			resolve(value);
+		});
+	},
+	for_each_async : function (items, iterator) {
+		var index    = -1,
+			deferred = this.defer();
+
+		next();
+
+		// jshint latedef : false
+		return deferred.promise;
+
+		function next () {
+			if (++index < items.length) {
+				iterator.call(items, items[index], index, next, items);
+			} else {
+				deferred.resolve();
+			}
+		}
+		// jshint latedef : true
+	},
+	all : function (promises) {
+		// jshint unused : false, latedef : false
+		var i = 0, deferred = this.defer(), pending_counter = 0, promise;
+
+		for (; i < promises.length; ++i) {
+			promise = promises[i];
+
+			if (promise && promise.type === "JEEFO_PROMISE") {
+				pending_counter += 1;
+
+				// Async resolver
+				promise.then(closure(i));
+			}
+		}
+
+		if (pending_counter === 0) {
+			deferred.resolve(promises);
+		}
+
+		return deferred.promise;
+
+		function closure (index) {
+			return function (value) {
+				promises[index] = value;
+
+				if (--pending_counter === 0) {
+					deferred.resolve(promises);
+				}
+			};
+		}
+		// jshint latedef : true
+	}
+};
+// }}}1
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : injector.js
+* Created at  : 2016-09-01
+* Updated at  : 2017-05-07
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+// Injector {{{1
+var JeefoInjector = function (values) {
+	this.values      = assign({}, values);
+	this.definitions = {};
+};
+
+JeefoInjector.prototype = {
+	// register {{{2
+	register : function (name, definition) {
+		var dependencies = definition.dependencies ? new ARRAY(definition.dependencies.length) : [],
+			i = dependencies.length - 1;
+
+		for (; i >= 0; --i) {
+			dependencies[i] = definition.dependencies[i];
+		}
+
+		if (this.values.hasOwnProperty(name) || this.definitions.hasOwnProperty(name)) {
+			min_error("Duplicated provider " + name + " detected.");
+		}
+
+		this.definitions[name] = {
+			fn             : definition.fn,
+			dependencies   : dependencies,
+			is_constructor : !! definition.is_constructor,
+		};
+		return this;
+	},
+
+	// resolve {{{2
+	resolve : function (name, local) {
+		var values            = this.values,
+			definitions       = this.definitions,
+			local_values      = (local && local.values) || {},
+			local_definitions = local && local.definitions,
+			execution_order;
+		
+		if (local_values.hasOwnProperty(name)) {
+			return local_values[name] && local_values[name].type === "JEEFO_PROMISE" ? local_values[name] : $q.when(local_values[name]);
+		} else if (values.hasOwnProperty(name)) {
+			return values[name] && values[name].type === "JEEFO_PROMISE" ? values[name] : $q.when(values[name]);
+		}
+
+		execution_order = topological_sort(name, function (name) {
+			if (local_definitions && local_definitions.hasOwnProperty(name)) {
+				return local_definitions[name].dependencies;
+			} else if (definitions.hasOwnProperty(name)) {
+				return definitions[name].dependencies;
+			}
+
+			min_error("Injector '" + name + "' definition is not found.");
+		});
+
+		return $q.for_each_async(execution_order, function (name, index, next) {
+			var container, definition;
+
+			if (local_values.hasOwnProperty(name) || values.hasOwnProperty(name)) {
+				return next();
+			} else if (local_definitions && local_definitions.hasOwnProperty(name)) {
+				container  = local_values;
+				definition = local_definitions[name];
+			} else {
+				container  = values;
+				definition = definitions[name];
+			}
+
+			var i = definition.dependencies.length - 1, args = new ARRAY(i + 1);
+			for (; i >= 0; --i) {
+				if (local_values.hasOwnProperty(definition.dependencies[i])) {
+					args[i] = local_values[definition.dependencies[i]];
+				} else if (values.hasOwnProperty(definition.dependencies[i])) {
+					args[i] = values[definition.dependencies[i]];
+				} else {
+					min_error("OMG");
+				}
+			}
+
+			// Call definition handler, invoker
+			var Result = definition.fn.apply(null, args);
+
+			if (definition.is_constructor) {
+				Result = new Result();
+			}
+
+			if (Result && Result.type === "JEEFO_PROMISE") {
+				Result.then(function (value) {
+					container[name] = value;
+					next();
+				});
+			} else {
+				container[name] = Result;
+				next();
+			}
+		}).then(function () {
+			if (local_values.hasOwnProperty(name)) {
+				return local_values[name];
+			}
+			return values[name];
+		});
+	},
+
+	// resolve sync {{{2
+	resolve_sync : function (name, local) {
+		var self              = this,
+			values            = self.values,
+			local_values      = (local && local.values) || {},
+			definitions       = self.definitions,
+			local_definitions = local && local.definitions,
+			container;
+		
+		if (local_values.hasOwnProperty(name)) {
+			return local_values[name];
+		} else if (values.hasOwnProperty(name)) {
+			return values[name];
+		}
+
+		if (local_definitions && local_definitions.hasOwnProperty(name)) {
+			container = local_values;
+		} else if (definitions.hasOwnProperty(name)) {
+			container = values;
+		}
+
+		var execution_order = topological_sort(name, function (name) {
+			if (local_definitions && local_definitions.hasOwnProperty(name)) {
+				return local_definitions[name].dependencies;
+			} else if (definitions.hasOwnProperty(name)) {
+				return definitions[name].dependencies;
+			}
+
+			min_error("Injector '" + name + "' definition is not found.");
+		});
+
+		var definition = definitions[execution_order.pop()],
+			args       = new ARRAY(definition.dependencies.length),
+			i          = 0;
+
+		for (; i < execution_order.length; ++i) {
+			if (! local_values.hasOwnProperty(execution_order[i]) && ! values.hasOwnProperty(execution_order[i])) {
+				self.resolve_sync(execution_order[i], local);
+			}
+		}
+
+		for (i = args.length - 1; i >= 0; --i) {
+			args[i] = local_values.hasOwnProperty(definition.dependencies[i]) ?
+				local_values[definition.dependencies[i]] :
+				values[definition.dependencies[i]];
+		}
+
+		return (container[name] = definition.fn.apply(null, args));
+	},
+	// }}}2
+};
+// }}}1
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : module.js
+* Created at  : 2016-09-01
+* Updated at  : 2017-05-07
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+// Public Injector {{{1
+var PublicInjector = function (module_name, injector, local, new_definitions) {
+	var self         = this,
+		definitions  = injector.definitions,
+		local_values = local.values;
+
+	self.has          = has;
+	self.resolve      = resolve;
+	self.register     = register;
+	self.resolve_sync = resolve_sync;
+
+	// jshint latedef : false
+	return self;
+
+	function has (name) {
+		return name === "$injector" || local_values.hasOwnProperty(name) || definitions.hasOwnProperty(name);
+	}
+
+	function register (name, definition) {
+		if (has(name)) {
+			min_error("Duplicated provider '" + name + "' detected in module '" + module.name + "'.");
+		}
+		injector.register(name, definition);
+		new_definitions[name] = injector.definitions[name];
+
+		return self;
+	}
+
+	function resolve (name) {
+		if (name === "$injector") {
+			return $q.when(self);
+		} else if (local_values.hasOwnProperty(name)) {
+			return $q.when(local_values[name]);
+		} else if (definitions.hasOwnProperty(name)) {
+			return injector.resolve(name, local);
+		}
+
+		min_error("Module provider '" + name + "' definition is not found in '" + module_name + "' module.");
+	}
+
+	function resolve_sync (name) {
+		if (name === "$injector") {
+			return self;
+		} else if (local_values.hasOwnProperty(name)) {
+			return local_values[name];
+		} else if (definitions.hasOwnProperty(name)) {
+			return injector.resolve_sync(name, local);
+		}
+
+		min_error("Module provider '" + name + "' definition is not found in '" + module_name + "' module.");
+	}
+	// jshint latedef : true
+};
+// }}}1
+
+var make_injectable = function (name, dependencies, fn) {
+	if (typeof dependencies === "function") {
+		return {
+			fn           : dependencies,
+			name         : name,
+			dependencies : [],
+		};
+	} else if (typeof dependencies === "string") {
+		return {
+			fn           : fn,
+			name         : name,
+			dependencies : [dependencies],
+		};
+	}
+
+	var i = dependencies.length - 1,
+		deps = new ARRAY(i + 1);
+
+	for (; i >= 0; --i) {
+		deps[i] = dependencies[i];
+	}
+
+	return {
+		fn           : fn,
+		name         : name,
+		dependencies : deps,
+	};
+};
+
+var MODULES = {};
+// Cache for memory efficiensy
+var empty_dependencies = { dependencies : [] };
+var default_injectors = {
+	values : {
+		$q                  : $q,
+		Array               : Array,
+		Injector            : JeefoInjector,
+		is_array            : Array.is_array,
+		"object.keys"       : object_keys,
+		"object.assign"     : assign,
+		make_injectable     : make_injectable,
+		"sorts.topological" : topological_sort,
+	},
+	definitions : {
+		$q                  : empty_dependencies,
+		Array               : empty_dependencies,
+		Injector            : empty_dependencies,
+		is_array            : empty_dependencies,
+		"object.keys"       : empty_dependencies,
+		"object.assign"     : empty_dependencies,
+		make_injectable     : empty_dependencies,
+		"sorts.topological" : empty_dependencies,
+	}
+};
+
+var make_module = function (module_name, requires) {
+
+	if (MODULES.hasOwnProperty(module_name)) {
+		min_error("Duplicated module '" + module_name + "' is detected.");
+	}
+
+	var instance = {
+			name   : module_name,
+			extend : store_extend,
+		},
+		injector             = new JeefoInjector(),
+		extenders            = [],
+		extends_length       = 0,
+		new_definitions      = {},
+		public_injector      = new PublicInjector(module_name, injector, default_injectors, new_definitions),
+		concated_extenders   = [],
+		i, ordered_inherit_module_names, inherited_modules;
+
+	ordered_inherit_module_names = topological_sort(module_name, function (name) {
+		if (MODULES[name]) {
+			return MODULES[name].requires;
+		} else if (module_name === name) {
+			return requires;
+		}
+		min_error("'" + name + "' module is not found.");
+	});
+
+	// ignore last order, which is itself
+	inherited_modules = ordered_inherit_module_names.length > 1 ?
+		new ARRAY(ordered_inherit_module_names.length - 1) : [];
+
+	for (i = 0; i < inherited_modules.length; ++i) {
+		concated_extenders = concated_extenders.concat(MODULES[ordered_inherit_module_names[i]].extenders);
+		assign(injector.definitions, MODULES[ordered_inherit_module_names[i]].new_definitions);
+	}
+
+	MODULES[module_name] = {
+		name            : module_name,
+		requires        : requires,
+		instance        : instance,
+		injector        : injector,
+		extenders       : extenders,
+		public_injector : public_injector,
+		new_definitions : new_definitions,
+	};
+
+	for (i = 0; i < concated_extenders.length; ++i) {
+		extend(instance, concated_extenders[i]);
+	}
+
+	// jshint latedef : false
+	return instance;
+
+	// Do not use $injector.register inside extend function.
+	// Which can be called each inherited modules.
+	// So it will be create issue duplicated provider detected...
+	function store_extend () {
+		var	name       = arguments[0],
+			injectable = make_injectable.apply(null, arguments);
+
+		if (instance.hasOwnProperty(name)) {
+			min_error("'" + name + "' extends already registered in '" + module_name + "' module.");
+		}
+
+		extenders[extends_length++] = injectable;
+
+		extend(instance, injectable);
+
+		return instance;
+	}
+
+	function extend (instance, injectable) {
+		var	args = new ARRAY(injectable.dependencies.length);
+
+		$q.for_each_async(injectable.dependencies, function (dependency, index, next) {
+			public_injector.resolve(dependency).then(function (value) {
+				args[index] = value;
+				next();
+			});
+		}).then(function () {
+			instance[injectable.name] = injectable.fn.apply(instance, args);
+		});
+	}
+	// jshint latedef : true
+};
+
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : jeefo.js
+* Created at  : 2017-05-06
+* Updated at  : 2017-05-06
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+var Jeefo = function () {};
+
+Jeefo.prototype = {
+	use : function (middleware) {
+		middleware(this);
+	},
+	module : make_module,
+};
+
+return {
+	create : function () {
+		return new Jeefo();
+	}
+};
+
+}());

@@ -1,13 +1,17 @@
 {
   "name": "jeefo",
-  "version": "0.0.8",
+  "version": "0.0.9",
+  "homepage": "https://github.com/je3f0o/jeefo",
+  "copyright": "2016",
   "description": "jeefo library",
-  "author": "jeefo",
+  "author": {
+    "name": "je3f0o",
+    "email": "je3f0o@gmail.com"
+  },
   "license": "MIT",
-  "main": "jeefo.min.js",
+  "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha specs",
-    "finaltest": "npm run build && NODE_ENV=production ./node_modules/mocha/bin/mocha specs",
     "build": "node build.js"
   },
   "repository": {
@@ -22,5 +26,17 @@
     "fs-extra": "^0.30.0",
     "mocha": "^3.0.2",
     "uglify-js": "^2.7.3"
+  },
+  "uglify_config": {
+    "mangle": {
+      "toplevel": true
+    },
+    "compress": {
+      "comparisons": false
+    },
+    "fromString": true
+  },
+  "dependencies": {
+    "flow-typed": "^2.1.2"
   }
 }
