@@ -24,6 +24,8 @@ var IS_FUNCTION  = PP.define("IS_FUNCTION"  , function (x) { return typeof x ===
 var IS_UNDEFINED = PP.define("IS_UNDEFINED" , function (x) { return typeof x === "undefined"; }, true);
 */
 
+var object_keys = Object.keys;
+
 var $q               = require("./promise"),
 	utils            = require("./utils"),
 	assign           = utils.assign,

@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.12
+ * jeefo     : v0.0.13
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -627,6 +627,7 @@ var Jeefo = function () {};
 Jeefo.prototype = {
 	use : function (middleware) {
 		middleware(this);
+		return this;
 	},
 	module : function (name, requires) {
 		if (is_array(requires)) {

@@ -11,6 +11,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 var jeefo = require("../index.js").create();
 
+jeefo.use(require("jeefo_javascript_parser"));
 jeefo.use(require("jeefo_javascript_beautifier"));
 
 var pp = jeefo.module("jeefo.preprocessor", ["jeefo_javascript_beautifier"]);

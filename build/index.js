@@ -29,13 +29,9 @@ var get_filesize  = function (path) {
 var source_files = require("../source_files");
 
 var source = source_files.map(function (file) {
-	var code = fse.readFileSync(`./${ file }`, "utf8");
-
-	if (! file.startsWith("node_modules")) {
-		code = preprocessor(file, code).trim();
-	}
-
-	return code;
+	return preprocessor(file, 
+		fse.readFileSync(`./${ file }`, "utf8")
+	).trim();
 }).join("\n\n");
 
 // Compile

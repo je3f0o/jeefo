@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2016",
   "description": "jeefo library",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "expect": "^1.20.2",
     "fs-extra": "^0.30.0",
+    "jeefo_javascript_parser": "^0.0.5",
     "mocha": "^3.0.2",
     "uglify-js": "^2.7.3"
   },

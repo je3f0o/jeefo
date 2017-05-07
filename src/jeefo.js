@@ -21,6 +21,7 @@ var Jeefo = function () {};
 Jeefo.prototype = {
 	use : function (middleware) {
 		middleware(this);
+		return this;
 	},
 	module : function (name, requires) {
 		if (is_array(requires)) {
