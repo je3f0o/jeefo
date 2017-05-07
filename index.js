@@ -16,4 +16,4 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 var _package = require("./package");
 
-module.exports = require(`./dist/${ _package.name }.node`);
+module.exports = require(`./dist/${ _package.name }.node.min`);

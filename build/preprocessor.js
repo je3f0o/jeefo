@@ -302,9 +302,6 @@ pp.namespace("javascript.Preprocessor", [
 		}
 
 		if (this.current_expression === expression) {
-			if (!expression.start) {
-				console.log(this.current_expression, expression);
-			}
 			this.register("replace", {
 				start       : expression.start.index,
 				end         : expression.end.index,

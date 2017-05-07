@@ -11,12 +11,11 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha specs",
-    "build": "node build.js"
+    "build": "node build"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com:je3f0o/jeefo.git"
+    "url": "https://github.com/je3f0o/jeefo.git"
   },
   "keywords": [
     "jeefo"
