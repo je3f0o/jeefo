@@ -511,7 +511,7 @@ make_injectable = function (name, dependencies, fn) {
 		name         : name,
 		dependencies : deps,
 	};
-};
+},
 
 // Cache for memory efficiensy
 default_injectors = {
