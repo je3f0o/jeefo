@@ -90,12 +90,14 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 };
 // }}}1
 
-var make_injectable = function (name, dependencies, fn) {
+var empty_dependencies = { dependencies : empty_array },
+
+make_injectable = function (name, dependencies, fn) {
 	if (IS_FUNCTION(dependencies)) {
 		return {
 			fn           : dependencies,
 			name         : name,
-			dependencies : [],
+			dependencies : empty_array,
 		};
 	} else if (IS_STRING(dependencies)) {
 		return {
@@ -105,7 +107,7 @@ var make_injectable = function (name, dependencies, fn) {
 		};
 	}
 
-	var i = dependencies.length - 1,
+	var i    = dependencies.length - 1,
 		deps = new ARRAY(i + 1);
 
 	// jshint curly : false
@@ -120,13 +122,12 @@ var make_injectable = function (name, dependencies, fn) {
 };
 
 // Cache for memory efficiensy
-var empty_dependencies = { dependencies : [] };
-var default_injectors = {
+default_injectors = {
 	values : {
 		$q                  : $q,
 		"Array"             : ARRAY,
-		Injector            : JeefoInjector,
 		is_array            : is_array,
+		Injector            : JeefoInjector,
 		"object.keys"       : object_keys,
 		"object.assign"     : assign,
 		make_injectable     : make_injectable,
@@ -135,16 +136,16 @@ var default_injectors = {
 	definitions : {
 		$q                  : empty_dependencies,
 		"Array"             : empty_dependencies,
-		Injector            : empty_dependencies,
 		is_array            : empty_dependencies,
+		Injector            : empty_dependencies,
 		"object.keys"       : empty_dependencies,
 		"object.assign"     : empty_dependencies,
 		make_injectable     : empty_dependencies,
 		"sorts.topological" : empty_dependencies,
 	}
-};
+},
 
-var make_module = function (module_name, requires, container) {
+make_module = function (module_name, requires, container) {
 
 	var instance = {
 			name   : module_name,
@@ -231,6 +232,7 @@ var make_module = function (module_name, requires, container) {
 module.exports = make_module;
 
 // specs:start
+// Specs {{{1
 
 var expect = require("expect");
 
@@ -296,6 +298,7 @@ describe.only("Module", function () {
 	});
 });
 
+// }}}1
 // specs:end
 
 //ignore:end
