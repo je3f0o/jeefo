@@ -38,7 +38,7 @@ var JeefoInjector = function (values) {
 	this.definitions = {};
 };
 
-var empty_dependencies = [];
+var empty_array = [];
 
 JeefoInjector.prototype = {
 	// register {{{2
@@ -63,7 +63,7 @@ JeefoInjector.prototype = {
 		} else {
 			this.definitions[name] = {
 				fn             : definition.fn,
-				dependencies   : empty_dependencies,
+				dependencies   : empty_array,
 				is_constructor : !! definition.is_constructor,
 			};
 		}

@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.16
+ * jeefo     : v0.0.17
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -261,7 +261,7 @@ var JeefoInjector = function (values) {
 	this.definitions = {};
 };
 
-var empty_dependencies = [];
+var empty_array = [];
 
 JeefoInjector.prototype = {
 	// register {{{2
@@ -286,7 +286,7 @@ JeefoInjector.prototype = {
 		} else {
 			this.definitions[name] = {
 				fn             : definition.fn,
-				dependencies   : empty_dependencies,
+				dependencies   : empty_array,
 				is_constructor : !! definition.is_constructor,
 			};
 		}
