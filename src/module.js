@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -72,7 +72,7 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 			return injector.resolve(name, local);
 		}
 
-		min_error("Module provider '" + name + "' definition is not found in '" + module_name + "' module.");
+		min_error(`Module provider '${ name }' definition is not found in '${ module_name }' module.`);
 	}
 
 	function resolve_sync (name) {
@@ -84,7 +84,7 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 			return injector.resolve_sync(name, local);
 		}
 
-		min_error("Module provider '" + name + "' definition is not found in '" + module_name + "' module.");
+		min_error(`Module provider '${ name }' definition is not found in '${ module_name }' module.`);
 	}
 	// jshint latedef : true
 };
@@ -108,9 +108,9 @@ var make_injectable = function (name, dependencies, fn) {
 	var i = dependencies.length - 1,
 		deps = new ARRAY(i + 1);
 
-	for (; i >= 0; --i) {
-		deps[i] = dependencies[i];
-	}
+	// jshint curly : false
+	for (; i >= 0; deps[i] = dependencies[i], --i);
+	// jshint curly : true
 
 	return {
 		fn           : fn,
@@ -119,7 +119,6 @@ var make_injectable = function (name, dependencies, fn) {
 	};
 };
 
-var MODULES = {};
 // Cache for memory efficiensy
 var empty_dependencies = { dependencies : [] };
 var default_injectors = {
@@ -145,11 +144,7 @@ var default_injectors = {
 	}
 };
 
-var make_module = function (module_name, requires) {
-
-	if (MODULES.hasOwnProperty(module_name)) {
-		min_error("Duplicated module '" + module_name + "' is detected.");
-	}
+var make_module = function (module_name, requires, container) {
 
 	var instance = {
 			name   : module_name,
@@ -164,12 +159,12 @@ var make_module = function (module_name, requires) {
 		i, ordered_inherit_module_names, inherited_modules;
 
 	ordered_inherit_module_names = topological_sort(module_name, function (name) {
-		if (MODULES[name]) {
-			return MODULES[name].requires;
+		if (container[name]) {
+			return container[name].requires;
 		} else if (module_name === name) {
 			return requires;
 		}
-		min_error("'" + name + "' module is not found.");
+		min_error(`'${ name }' module is not found.`);
 	});
 
 	// ignore last order, which is itself
@@ -177,11 +172,11 @@ var make_module = function (module_name, requires) {
 		new ARRAY(ordered_inherit_module_names.length - 1) : [];
 
 	for (i = 0; i < inherited_modules.length; ++i) {
-		concated_extenders = concated_extenders.concat(MODULES[ordered_inherit_module_names[i]].extenders);
-		assign(injector.definitions, MODULES[ordered_inherit_module_names[i]].new_definitions);
+		concated_extenders = concated_extenders.concat(container[ordered_inherit_module_names[i]].extenders);
+		assign(injector.definitions, container[ordered_inherit_module_names[i]].new_definitions);
 	}
 
-	MODULES[module_name] = {
+	container[module_name] = {
 		name            : module_name,
 		requires        : requires,
 		instance        : instance,
@@ -206,7 +201,7 @@ var make_module = function (module_name, requires) {
 			injectable = make_injectable.apply(null, arguments);
 
 		if (instance.hasOwnProperty(name)) {
-			min_error("'" + name + "' extends already registered in '" + module_name + "' module.");
+			min_error(`'${ name }' extends already registered in '${ module_name }' module.`);
 		}
 
 		extenders[extends_length++] = injectable;

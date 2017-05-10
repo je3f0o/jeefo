@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -38,25 +38,35 @@ var JeefoInjector = function (values) {
 	this.definitions = {};
 };
 
+var empty_dependencies = [];
+
 JeefoInjector.prototype = {
 	// register {{{2
 	register : function (name, definition) {
-		var dependencies = definition.dependencies ? new ARRAY(definition.dependencies.length) : [],
-			i = dependencies.length - 1;
+		if (definition.dependencies.length) {
+			var dependencies = new ARRAY(definition.dependencies.length),
+				i = dependencies.length - 1;
 
-		for (; i >= 0; --i) {
-			dependencies[i] = definition.dependencies[i];
+			// jshint curly : false
+			for (; i >= 0; dependencies[i] = definition.dependencies[i], --i);
+			// jshint curly : true
+
+			if (this.values.hasOwnProperty(name) || this.definitions.hasOwnProperty(name)) {
+				min_error(`Duplicated provider ${ name } detected.`);
+			}
+
+			this.definitions[name] = {
+				fn             : definition.fn,
+				dependencies   : dependencies,
+				is_constructor : !! definition.is_constructor,
+			};
+		} else {
+			this.definitions[name] = {
+				fn             : definition.fn,
+				dependencies   : empty_dependencies,
+				is_constructor : !! definition.is_constructor,
+			};
 		}
-
-		if (this.values.hasOwnProperty(name) || this.definitions.hasOwnProperty(name)) {
-			min_error(`Duplicated provider ${ name } detected.`);
-		}
-
-		this.definitions[name] = {
-			fn             : definition.fn,
-			dependencies   : dependencies,
-			is_constructor : !! definition.is_constructor,
-		};
 		return this;
 	},
 

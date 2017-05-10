@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : jeefo.js
 * Created at  : 2017-05-06
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -23,18 +23,29 @@ Jeefo.prototype = {
 		middleware(this);
 		return this;
 	},
-	module : function (name, requires) {
-		if (is_array(requires)) {
-			return make_module(name, requires);
-		} else if (! MODULES.hasOwnProperty(name)) {
-			min_error(`'${ name }' module is not found.`);
-		}
-		return MODULES[name].instance;
-	},
 };
 
 return {
 	create : function () {
-		return new Jeefo();
+		var modules = {},
+			jeefo   = new Jeefo();
+
+		jeefo.module = module;
+
+		// jshint latedef : false
+		return jeefo;
+
+		function module (name, requires) {
+			if (is_array(requires)) {
+				if (modules.hasOwnProperty(name)) {
+					min_error(`Duplicated module '${ name }' is detected.`);
+				}
+				return make_module(name, requires, modules);
+			} else if (! modules.hasOwnProperty(name)) {
+				min_error(`'${ name }' module is not found.`);
+			}
+			return modules[name].instance;
+		}
+		// jshint latedef : true
 	}
 };

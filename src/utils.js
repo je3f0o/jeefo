@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -33,12 +33,12 @@ object_keys = Object.keys,
 assign = function (destination) {
 	for (var i = 1, source, keys, j; i < arguments.length; ++i) {
 		if ((source = arguments[i])) {
-			for (keys = object_keys(source), j = keys.length - 1; j >= 0; --j) {
 // ignore:start
 var KEY = PP.define("KEY", keys[j]);
 // ignore:end
-				destination[KEY] = source[KEY];
-			}
+			// jshint curly : false
+			for (keys = object_keys(source), j = keys.length - 1; j >= 0; destination[KEY] = source[KEY], --j);
+			// jshint curly : true
 		}
 	}
 

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : preprocessor.js
 * Created at  : 2017-04-26
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -9,7 +9,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 //ignore:start
 "use strict";
 
-var jeefo = require("../index.js").create();
+var jeefo = require("jeefo").create();
 
 jeefo.use(require("jeefo_javascript_parser"));
 jeefo.use(require("jeefo_javascript_beautifier"));

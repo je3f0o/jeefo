@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : topological_sort.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -36,7 +36,7 @@ var topological_sort = function (name, callback) {
 			dependencies = callback(_name);
 
 		// jshint curly : false
-		for (ancestors[i] = _ancestors[i]; i >= 0; ancestors[i] = _ancestors[i], --i);
+		for (; i >= 0; ancestors[i] = _ancestors[i], --i);
 		// jshint curly : true
 
 		ancestors.push(_name);

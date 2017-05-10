@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.13
+ * jeefo     : v0.0.14
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -13,7 +13,7 @@ module.exports = (function () {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : utils.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -25,9 +25,9 @@ object_keys = Object.keys,
 assign = function (destination) {
 	for (var i = 1, source, keys, j; i < arguments.length; ++i) {
 		if ((source = arguments[i])) {
-			for (keys = object_keys(source), j = keys.length - 1; j >= 0; --j) {
-				destination[keys[j]] = source[keys[j]];
-			}
+			// jshint curly : false
+			for (keys = object_keys(source), j = keys.length - 1; j >= 0; destination[keys[j]] = source[keys[j]], --j);
+			// jshint curly : true
 		}
 	}
 
@@ -40,7 +40,7 @@ min_error = function (message) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : topological_sort.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -57,7 +57,7 @@ var topological_sort = function (name, callback) {
 			dependencies = callback(_name);
 
 		// jshint curly : false
-		for (ancestors[i] = _ancestors[i]; i >= 0; ancestors[i] = _ancestors[i], --i);
+		for (; i >= 0; ancestors[i] = _ancestors[i], --i);
 		// jshint curly : true
 
 		ancestors.push(_name);
@@ -249,7 +249,7 @@ var $q = {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -261,25 +261,35 @@ var JeefoInjector = function (values) {
 	this.definitions = {};
 };
 
+var empty_dependencies = [];
+
 JeefoInjector.prototype = {
 	// register {{{2
 	register : function (name, definition) {
-		var dependencies = definition.dependencies ? new ARRAY(definition.dependencies.length) : [],
-			i = dependencies.length - 1;
+		if (definition.dependencies.length) {
+			var dependencies = new ARRAY(definition.dependencies.length),
+				i = dependencies.length - 1;
 
-		for (; i >= 0; --i) {
-			dependencies[i] = definition.dependencies[i];
+			// jshint curly : false
+			for (; i >= 0; dependencies[i] = definition.dependencies[i], --i);
+			// jshint curly : true
+
+			if (this.values.hasOwnProperty(name) || this.definitions.hasOwnProperty(name)) {
+				min_error("Duplicated provider " + name + " detected.");
+			}
+
+			this.definitions[name] = {
+				fn             : definition.fn,
+				dependencies   : dependencies,
+				is_constructor : !! definition.is_constructor,
+			};
+		} else {
+			this.definitions[name] = {
+				fn             : definition.fn,
+				dependencies   : empty_dependencies,
+				is_constructor : !! definition.is_constructor,
+			};
 		}
-
-		if (this.values.hasOwnProperty(name) || this.definitions.hasOwnProperty(name)) {
-			min_error("Duplicated provider " + name + " detected.");
-		}
-
-		this.definitions[name] = {
-			fn             : definition.fn,
-			dependencies   : dependencies,
-			is_constructor : !! definition.is_constructor,
-		};
 		return this;
 	},
 
@@ -411,7 +421,7 @@ JeefoInjector.prototype = {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -490,9 +500,9 @@ var make_injectable = function (name, dependencies, fn) {
 	var i = dependencies.length - 1,
 		deps = new ARRAY(i + 1);
 
-	for (; i >= 0; --i) {
-		deps[i] = dependencies[i];
-	}
+	// jshint curly : false
+	for (; i >= 0; deps[i] = dependencies[i], --i);
+	// jshint curly : true
 
 	return {
 		fn           : fn,
@@ -501,7 +511,6 @@ var make_injectable = function (name, dependencies, fn) {
 	};
 };
 
-var MODULES = {};
 // Cache for memory efficiensy
 var empty_dependencies = { dependencies : [] };
 var default_injectors = {
@@ -527,11 +536,7 @@ var default_injectors = {
 	}
 };
 
-var make_module = function (module_name, requires) {
-
-	if (MODULES.hasOwnProperty(module_name)) {
-		min_error("Duplicated module '" + module_name + "' is detected.");
-	}
+var make_module = function (module_name, requires, container) {
 
 	var instance = {
 			name   : module_name,
@@ -546,8 +551,8 @@ var make_module = function (module_name, requires) {
 		i, ordered_inherit_module_names, inherited_modules;
 
 	ordered_inherit_module_names = topological_sort(module_name, function (name) {
-		if (MODULES[name]) {
-			return MODULES[name].requires;
+		if (container[name]) {
+			return container[name].requires;
 		} else if (module_name === name) {
 			return requires;
 		}
@@ -559,11 +564,11 @@ var make_module = function (module_name, requires) {
 		new ARRAY(ordered_inherit_module_names.length - 1) : [];
 
 	for (i = 0; i < inherited_modules.length; ++i) {
-		concated_extenders = concated_extenders.concat(MODULES[ordered_inherit_module_names[i]].extenders);
-		assign(injector.definitions, MODULES[ordered_inherit_module_names[i]].new_definitions);
+		concated_extenders = concated_extenders.concat(container[ordered_inherit_module_names[i]].extenders);
+		assign(injector.definitions, container[ordered_inherit_module_names[i]].new_definitions);
 	}
 
-	MODULES[module_name] = {
+	container[module_name] = {
 		name            : module_name,
 		requires        : requires,
 		instance        : instance,
@@ -616,7 +621,7 @@ var make_module = function (module_name, requires) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : jeefo.js
 * Created at  : 2017-05-06
-* Updated at  : 2017-05-07
+* Updated at  : 2017-05-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -629,19 +634,30 @@ Jeefo.prototype = {
 		middleware(this);
 		return this;
 	},
-	module : function (name, requires) {
-		if (is_array(requires)) {
-			return make_module(name, requires);
-		} else if (! MODULES.hasOwnProperty(name)) {
-			min_error("'" + name + "' module is not found.");
-		}
-		return MODULES[name].instance;
-	},
 };
 
 return {
 	create : function () {
-		return new Jeefo();
+		var modules = {},
+			jeefo   = new Jeefo();
+
+		jeefo.module = module;
+
+		// jshint latedef : false
+		return jeefo;
+
+		function module (name, requires) {
+			if (is_array(requires)) {
+				if (modules.hasOwnProperty(name)) {
+					min_error("Duplicated module '" + name + "' is detected.");
+				}
+				return make_module(name, requires, modules);
+			} else if (! modules.hasOwnProperty(name)) {
+				min_error("'" + name + "' module is not found.");
+			}
+			return modules[name].instance;
+		}
+		// jshint latedef : true
 	}
 };
 
