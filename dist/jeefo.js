@@ -263,7 +263,7 @@ var empty_dependencies = [];
 JeefoInjector.prototype = {
 	// register {{{2
 	register : function (name, definition) {
-		if (definition.dependencies.length) {
+		if (definition.dependencies) {
 			var dependencies = new ARRAY(definition.dependencies.length),
 				i = dependencies.length - 1;
 
