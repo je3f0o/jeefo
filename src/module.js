@@ -1,28 +1,15 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-10
+* Updated at  : 2017-06-30
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 //ignore:start
-"use strict";
 
-/* globals -PP, -IS_FUNCTION, -IS_STRING, -IS_UNDEFINED */
+/* globals empty_array */
 /* exported module */
-/* exported */
-
-/*
-var PP = {
-	define : function (name, definition) { return definition; }
-};
-
-var ARRAY = Array;
-var IS_STRING    = PP.define("IS_STRING"    , function (x) { return typeof x === "string";    }, true);
-var IS_FUNCTION  = PP.define("IS_FUNCTION"  , function (x) { return typeof x === "function";  }, true);
-var IS_UNDEFINED = PP.define("IS_UNDEFINED" , function (x) { return typeof x === "undefined"; }, true);
-*/
 
 var object_keys = Object.keys;
 
@@ -55,7 +42,7 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 
 	function register (name, definition) {
 		if (has(name)) {
-			min_error(`Duplicated provider '${ name }' detected in module '${ module.name }'.`);
+			min_error(`Duplicated provider '${ name }' detected in module '${ module_name }'.`);
 		}
 		injector.register(name, definition);
 		new_definitions[name] = injector.definitions[name];
@@ -64,9 +51,7 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 	}
 
 	function resolve (name) {
-		if (name === "$injector") {
-			return $q.when(self);
-		} else if (local_values.hasOwnProperty(name)) {
+		if (local_values.hasOwnProperty(name)) {
 			return $q.when(local_values[name]);
 		} else if (definitions.hasOwnProperty(name)) {
 			return injector.resolve(name, local);
@@ -76,9 +61,7 @@ var PublicInjector = function (module_name, injector, local, new_definitions) {
 	}
 
 	function resolve_sync (name) {
-		if (name === "$injector") {
-			return self;
-		} else if (local_values.hasOwnProperty(name)) {
+		if (local_values.hasOwnProperty(name)) {
 			return local_values[name];
 		} else if (definitions.hasOwnProperty(name)) {
 			return injector.resolve_sync(name, local);
@@ -176,6 +159,10 @@ make_module = function (module_name, requires, container) {
 		concated_extenders = concated_extenders.concat(container[ordered_inherit_module_names[i]].extenders);
 		assign(injector.definitions, container[ordered_inherit_module_names[i]].new_definitions);
 	}
+	injector.definitions.$injector = {
+		fn           : return_public_injector,
+		dependencies : empty_array,
+	};
 
 	container[module_name] = {
 		name            : module_name,
@@ -193,6 +180,8 @@ make_module = function (module_name, requires, container) {
 
 	// jshint latedef : false
 	return instance;
+
+	function return_public_injector () { return public_injector; }
 
 	// Do not use $injector.register inside extend function.
 	// Which can be called each inherited modules.
