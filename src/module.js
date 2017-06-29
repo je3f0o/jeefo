@@ -131,7 +131,7 @@ default_injectors = {
 make_module = function (module_name, requires, container) {
 
 	var instance = {
-			name   : module_name,
+			$name  : module_name,
 			extend : store_extend,
 		},
 		injector             = new JeefoInjector(),
@@ -140,9 +140,9 @@ make_module = function (module_name, requires, container) {
 		new_definitions      = {},
 		public_injector      = new PublicInjector(module_name, injector, default_injectors, new_definitions),
 		concated_extenders   = [],
-		i, ordered_inherit_module_names, inherited_modules;
+		i, ordered_included_module_names;
 
-	ordered_inherit_module_names = topological_sort(module_name, function (name) {
+	ordered_included_module_names = topological_sort(module_name, function (name) {
 		if (container[name]) {
 			return container[name].requires;
 		} else if (module_name === name) {
@@ -152,12 +152,12 @@ make_module = function (module_name, requires, container) {
 	});
 
 	// ignore last order, which is itself
-	inherited_modules = ordered_inherit_module_names.length > 1 ?
-		new ARRAY(ordered_inherit_module_names.length - 1) : [];
+	ordered_included_module_names.pop();
+	instance.$included_modules = ordered_included_module_names;
 
-	for (i = 0; i < inherited_modules.length; ++i) {
-		concated_extenders = concated_extenders.concat(container[ordered_inherit_module_names[i]].extenders);
-		assign(injector.definitions, container[ordered_inherit_module_names[i]].new_definitions);
+	for (i = 0; i < ordered_included_module_names.length; ++i) {
+		concated_extenders = concated_extenders.concat(container[ordered_included_module_names[i]].extenders);
+		assign(injector.definitions, container[ordered_included_module_names[i]].new_definitions);
 	}
 	injector.definitions.$injector = {
 		fn           : return_public_injector,
