@@ -1,16 +1,14 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-07-01
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 //ignore:start
-"use strict";
 
 /* globals -PP, -IS_DEFINED */
-/* exported */
 /* exported $q */
 
 var PP = {
@@ -93,7 +91,11 @@ var JeefoPromise = function (promise_handler) {
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case RESOLVED_STATE_ENUM :
-					return next_resolver(resolver(result));
+					var next_result = resolver(result);
+					if (IS_JEEFO_PROMISE(next_result)) {
+						return next_result.then(next_resolver, next_rejector);
+					}
+					return next_resolver(next_result);
 				case REJECTED_STATE_ENUM :
 					return next_rejector(rejector(result));
 				default:

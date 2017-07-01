@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.20
+ * jeefo     : v0.0.21
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -86,7 +86,7 @@ var topological_sort = function (name, callback) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-06
+* Updated at  : 2017-07-01
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -156,7 +156,11 @@ var JeefoPromise = function (promise_handler) {
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case 1 :
-					return next_resolver(resolver(result));
+					var next_result = resolver(result);
+					if (next_result && next_result.type === "JEEFO_PROMISE") {
+						return next_result.then(next_resolver, next_rejector);
+					}
+					return next_resolver(next_result);
 				case 2 :
 					return next_rejector(rejector(result));
 				default:
