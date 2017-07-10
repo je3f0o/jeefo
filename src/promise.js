@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-07-01
+* Updated at  : 2017-07-11
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -35,29 +35,46 @@ var JeefoPromise = function (promise_handler) {
 		pendings_length = 0, result;
 
 	instance.then       = then;
+	instance.$catch     = $catch;
 	instance.state      = PENDING_STATE;
 	instance.is_pending = is_pending;
 
 	// Promise handler {{{2
-	promise_handler(function (value) {
-		if (state !== PENDING_STATE_ENUM) { return; }
+	try {
+		promise_handler(function (value) {
+			if (state !== PENDING_STATE_ENUM) { return; }
 
-		state          = RESOLVED_STATE_ENUM;
-		instance.state = RESOLVED_STATE;
-		instance.value = result = value;
+			state          = RESOLVED_STATE_ENUM;
+			instance.state = RESOLVED_STATE;
+			instance.value = result = value;
 
-		for (var i = 0; i < pendings_length; i += 4) {
-			value = pendings[i](result);
+			for (var i = 0; i < pendings_length; i += 4) {
+				value = pendings[i](result);
 
-			if (IS_JEEFO_PROMISE(value)) {
-				value.then(pendings[i + 2], pendings[i + 3]);
-			} else {
-				pendings[i + 2](value);
+				if (IS_JEEFO_PROMISE(value)) {
+					value.then(pendings[i + 2], pendings[i + 3]);
+				} else {
+					pendings[i + 2](value);
+				}
 			}
-		}
-		pendings        = null;
-		pendings_length = 0;
-	}, function (reason) {
+			pendings        = null;
+			pendings_length = 0;
+		}, _rejector);
+	} catch (e) {
+		_rejector(e);
+	}
+	// }}}2
+
+	// jshint latedef : false
+	return instance;
+
+	// Is pending ? {{{2
+	function is_pending () {
+		return state === PENDING_STATE_ENUM;
+	}
+
+	// Rejector {{{2
+	function _rejector (reason) {
 		if (state !== PENDING_STATE_ENUM) { return; }
 
 		state           = REJECTED_STATE_ENUM;
@@ -75,15 +92,6 @@ var JeefoPromise = function (promise_handler) {
 		}
 		pendings        = null;
 		pendings_length = 0;
-	});
-	// }}}2
-
-	// jshint latedef : false
-	return instance;
-
-	// Is pending ? {{{2
-	function is_pending () {
-		return state === PENDING_STATE_ENUM;
 	}
 
 	// Then {{{2
@@ -97,11 +105,30 @@ var JeefoPromise = function (promise_handler) {
 					}
 					return next_resolver(next_result);
 				case REJECTED_STATE_ENUM :
-					return next_rejector(rejector(result));
+					if (rejector) {
+						return next_resolver(rejector(result));
+					}
+					return next_rejector(result);
 				default:
 					pendings[pendings_length    ] = resolver;
 					pendings[pendings_length + 1] = rejector;
 					pendings[pendings_length + 2] = next_resolver;
+					pendings[pendings_length + 3] = next_rejector;
+					pendings_length += 4;
+			}
+		});
+	}
+
+	// Catch {{{2
+	function $catch (rejector) {
+		return new JeefoPromise(function (next_resolver, next_rejector) {
+			switch (state) {
+				case REJECTED_STATE_ENUM :
+					return next_resolver(rejector(result));
+				default:
+					pendings[pendings_length    ] = null;
+					pendings[pendings_length + 1] = rejector;
+					pendings[pendings_length + 2] = null;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
