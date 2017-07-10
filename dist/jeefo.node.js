@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.22
+ * jeefo     : v0.0.23
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -188,16 +188,25 @@ var JeefoPromise = function (promise_handler) {
 	function $catch (rejector) {
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
+				case 1 :
+					if (result && result.type === "JEEFO_PROMISE") {
+						return result.then(next_resolver, next_rejector);
+					}
+					return next_resolver(result);
 				case 2 :
 					return next_resolver(rejector(result));
 				default:
-					pendings[pendings_length    ] = null;
+					pendings[pendings_length    ] = _resolver;
 					pendings[pendings_length + 1] = rejector;
-					pendings[pendings_length + 2] = null;
+					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
 		});
+
+		function _resolver () {
+			return result;
+		}
 	}
 	// }}}2
 	// jshint latedef : true
