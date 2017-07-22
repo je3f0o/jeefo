@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-07-11
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -28,38 +28,25 @@ var IS_JEEFO_PROMISE    = function (v) {
 // ignore:end
 
 // JeefoPromise {{{1
-var JeefoPromise = function (promise_handler) {
+var JeefoPromise = function (promise_handler, callback, args) {
 	var state           = PENDING_STATE_ENUM,
 		pendings        = [],
 		instance        = this,
-		pendings_length = 0, result;
+		is_last_chain   = true,
+		pendings_length = 0,
+		result;
 
-	instance.then       = then;
-	instance.$catch     = $catch;
-	instance.state      = PENDING_STATE;
-	instance.is_pending = is_pending;
+	instance.then        = then;
+	instance.state       = PENDING_STATE;
+	instance.$catch      = $catch;
+	instance.result      = get_result;
+	instance.is_pending  = is_pending;
+	instance.is_rejected = is_rejected;
+	instance.is_resolved = is_resolved;
 
 	// Promise handler {{{2
 	try {
-		promise_handler(function (value) {
-			if (state !== PENDING_STATE_ENUM) { return; }
-
-			state          = RESOLVED_STATE_ENUM;
-			instance.state = RESOLVED_STATE;
-			instance.value = result = value;
-
-			for (var i = 0; i < pendings_length; i += 4) {
-				value = pendings[i](result);
-
-				if (IS_JEEFO_PROMISE(value)) {
-					value.then(pendings[i + 2], pendings[i + 3]);
-				} else {
-					pendings[i + 2](value);
-				}
-			}
-			pendings        = null;
-			pendings_length = 0;
-		}, _rejector);
+		promise_handler(_resolver, _rejector);
 	} catch (e) {
 		_rejector(e);
 	}
@@ -71,6 +58,46 @@ var JeefoPromise = function (promise_handler) {
 	// Is pending ? {{{2
 	function is_pending () {
 		return state === PENDING_STATE_ENUM;
+	}
+
+	// Is rejected ? {{{2
+	function is_rejected () {
+		return state === REJECTED_STATE_ENUM;
+	}
+
+	// Is rejected ? {{{2
+	function is_resolved () {
+		return state === RESOLVED_STATE_ENUM;
+	}
+
+	// Get result {{{2
+	function get_result () {
+		return result;
+	}
+
+	// Resolver {{{2
+	function _resolver (value) {
+		if (state !== PENDING_STATE_ENUM) { return; }
+
+		state          = RESOLVED_STATE_ENUM;
+		instance.state = RESOLVED_STATE;
+		instance.value = result = value;
+
+		for (var i = 0; i < pendings_length; i += 4) {
+			value = pendings[i](result);
+
+			if (IS_JEEFO_PROMISE(value)) {
+				value.then(pendings[i + 2], pendings[i + 3]);
+			} else {
+				pendings[i + 2](value);
+			}
+		}
+		pendings        = null;
+		pendings_length = 0;
+
+		if (is_last_chain && callback) {
+			callback.apply(null, args);
+		}
 	}
 
 	// Rejector {{{2
@@ -92,10 +119,15 @@ var JeefoPromise = function (promise_handler) {
 		}
 		pendings        = null;
 		pendings_length = 0;
+
+		if (is_last_chain && callback) {
+			callback.apply(null, args);
+		}
 	}
 
 	// Then {{{2
 	function then (resolver, rejector) {
+		is_last_chain = false;
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case RESOLVED_STATE_ENUM :
@@ -110,17 +142,18 @@ var JeefoPromise = function (promise_handler) {
 					}
 					return next_rejector(result);
 				default:
-					pendings[pendings_length    ] = resolver;
-					pendings[pendings_length + 1] = rejector;
+					pendings[pendings_length    ] = resolver || get_result;
+					pendings[pendings_length + 1] = rejector || get_result;
 					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
-		});
+		}, callback, args);
 	}
 
 	// Catch {{{2
 	function $catch (rejector) {
+		is_last_chain = false;
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case RESOLVED_STATE_ENUM :
@@ -131,17 +164,13 @@ var JeefoPromise = function (promise_handler) {
 				case REJECTED_STATE_ENUM :
 					return next_resolver(rejector(result));
 				default:
-					pendings[pendings_length    ] = _resolver;
+					pendings[pendings_length    ] = get_result;
 					pendings[pendings_length + 1] = rejector;
 					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
-		});
-
-		function _resolver () {
-			return result;
-		}
+		}, callback, args);
 	}
 	// }}}2
 	// jshint latedef : true
@@ -157,6 +186,11 @@ var $q = {
 			deferred.reject  = reject;
 		});
 		return deferred;
+	},
+	reject : function (reason) {
+		return new JeefoPromise(function (resolve, reject) {
+			reject(reason);
+		});
 	},
 	when  : function (value) {
 		// jshint latedef : false
@@ -179,10 +213,18 @@ var $q = {
 
 		function next () {
 			if (++index < items.length) {
-				iterator.call(items, items[index], index, next, items);
+				try {
+					iterator.call(items, items[index], index, next, rejector);
+				} catch (e) {
+					rejector(e);
+				}
 			} else {
 				deferred.resolve();
 			}
+		}
+
+		function rejector (reason) {
+			deferred.reject(reason);
 		}
 		// jshint latedef : true
 	},

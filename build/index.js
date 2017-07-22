@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-04-29
-* Updated at  : 2017-05-07
+* Updated at  : 2017-07-11
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -45,12 +45,11 @@ var header = header_compiler({
 	Copyright       : _package.copyright
 });
 
-var browser_source = `(function () {"use strict";var jeefo=(function(){ ${ source } }()); window.jeefo = jeefo.create(); }());`;
+var browser_source = `(function () { "use strict";\n\nvar jeefo = (function() {\n\n${ source }\n\n}());\n\nwindow.jeefo = jeefo.create();\n\n}());`;
 var node_source    = `${ header }\n"use strict";\n\nmodule.exports = (function () {\n\n${ source }\n\n}());`;
-var node_min_source;
 
-browser_source  = header + uglify.minify(browser_source, _package.uglify_config).code;
-node_min_source = header + uglify.minify(node_source, _package.uglify_config).code;
+var browser_min_source  = header + uglify.minify(browser_source, _package.uglify_config).code,
+	node_min_source     = header + uglify.minify(node_source, _package.uglify_config).code;
 
 // Final step
 var output_filename   = path.resolve(__dirname, `../dist/${ _package.name }.js`);
@@ -59,10 +58,10 @@ var node_min_filename = path.resolve(__dirname, `../dist/${ _package.name }.node
 var browser_filename  = path.resolve(__dirname, `../dist/${ _package.name }.min.js`);
 
 
-fse.outputFileSync(output_filename, `${ header }\n\n${ source }`);
+fse.outputFileSync(output_filename, `${ header }${ browser_source }`);
 fse.outputFileSync(node_filename, node_source);
 fse.outputFileSync(node_min_filename, node_min_source);
-fse.outputFileSync(browser_filename, browser_source);
+fse.outputFileSync(browser_filename, browser_min_source);
 
 console.log(`Raw source: ${ get_filesize(output_filename) } bytes.`);
 console.log(`Node source: ${ get_filesize(node_filename) } bytes.`);

@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.23
+ * jeefo     : v0.0.24
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -86,45 +86,32 @@ var topological_sort = function (name, callback) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-07-11
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 
 // JeefoPromise {{{1
-var JeefoPromise = function (promise_handler) {
+var JeefoPromise = function (promise_handler, callback, args) {
 	var state           = 0,
 		pendings        = [],
 		instance        = this,
-		pendings_length = 0, result;
+		is_last_chain   = true,
+		pendings_length = 0,
+		result;
 
-	instance.then       = then;
-	instance.$catch     = $catch;
-	instance.state      = "pending...";
-	instance.is_pending = is_pending;
+	instance.then        = then;
+	instance.state       = "pending...";
+	instance.$catch      = $catch;
+	instance.result      = get_result;
+	instance.is_pending  = is_pending;
+	instance.is_rejected = is_rejected;
+	instance.is_resolved = is_resolved;
 
 	// Promise handler {{{2
 	try {
-		promise_handler(function (value) {
-			if (state !== 0) { return; }
-
-			state          = 1;
-			instance.state = "resolved";
-			instance.value = result = value;
-
-			for (var i = 0; i < pendings_length; i += 4) {
-				value = pendings[i](result);
-
-				if (value && value.type === "JEEFO_PROMISE") {
-					value.then(pendings[i + 2], pendings[i + 3]);
-				} else {
-					pendings[i + 2](value);
-				}
-			}
-			pendings        = null;
-			pendings_length = 0;
-		}, _rejector);
+		promise_handler(_resolver, _rejector);
 	} catch (e) {
 		_rejector(e);
 	}
@@ -136,6 +123,46 @@ var JeefoPromise = function (promise_handler) {
 	// Is pending ? {{{2
 	function is_pending () {
 		return state === 0;
+	}
+
+	// Is rejected ? {{{2
+	function is_rejected () {
+		return state === 2;
+	}
+
+	// Is rejected ? {{{2
+	function is_resolved () {
+		return state === 1;
+	}
+
+	// Get result {{{2
+	function get_result () {
+		return result;
+	}
+
+	// Resolver {{{2
+	function _resolver (value) {
+		if (state !== 0) { return; }
+
+		state          = 1;
+		instance.state = "resolved";
+		instance.value = result = value;
+
+		for (var i = 0; i < pendings_length; i += 4) {
+			value = pendings[i](result);
+
+			if (value && value.type === "JEEFO_PROMISE") {
+				value.then(pendings[i + 2], pendings[i + 3]);
+			} else {
+				pendings[i + 2](value);
+			}
+		}
+		pendings        = null;
+		pendings_length = 0;
+
+		if (is_last_chain && callback) {
+			callback.apply(null, args);
+		}
 	}
 
 	// Rejector {{{2
@@ -157,10 +184,15 @@ var JeefoPromise = function (promise_handler) {
 		}
 		pendings        = null;
 		pendings_length = 0;
+
+		if (is_last_chain && callback) {
+			callback.apply(null, args);
+		}
 	}
 
 	// Then {{{2
 	function then (resolver, rejector) {
+		is_last_chain = false;
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case 1 :
@@ -175,17 +207,18 @@ var JeefoPromise = function (promise_handler) {
 					}
 					return next_rejector(result);
 				default:
-					pendings[pendings_length    ] = resolver;
-					pendings[pendings_length + 1] = rejector;
+					pendings[pendings_length    ] = resolver || get_result;
+					pendings[pendings_length + 1] = rejector || get_result;
 					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
-		});
+		}, callback, args);
 	}
 
 	// Catch {{{2
 	function $catch (rejector) {
+		is_last_chain = false;
 		return new JeefoPromise(function (next_resolver, next_rejector) {
 			switch (state) {
 				case 1 :
@@ -196,17 +229,13 @@ var JeefoPromise = function (promise_handler) {
 				case 2 :
 					return next_resolver(rejector(result));
 				default:
-					pendings[pendings_length    ] = _resolver;
+					pendings[pendings_length    ] = get_result;
 					pendings[pendings_length + 1] = rejector;
 					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
 			}
-		});
-
-		function _resolver () {
-			return result;
-		}
+		}, callback, args);
 	}
 	// }}}2
 	// jshint latedef : true
@@ -222,6 +251,11 @@ var $q = {
 			deferred.reject  = reject;
 		});
 		return deferred;
+	},
+	reject : function (reason) {
+		return new JeefoPromise(function (resolve, reject) {
+			reject(reason);
+		});
 	},
 	when  : function (value) {
 		// jshint latedef : false
@@ -244,10 +278,18 @@ var $q = {
 
 		function next () {
 			if (++index < items.length) {
-				iterator.call(items, items[index], index, next, items);
+				try {
+					iterator.call(items, items[index], index, next, rejector);
+				} catch (e) {
+					rejector(e);
+				}
 			} else {
 				deferred.resolve();
 			}
+		}
+
+		function rejector (reason) {
+			deferred.reject(reason);
 		}
 		// jshint latedef : true
 	},
@@ -289,15 +331,16 @@ var $q = {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-10
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 
 // Injector {{{1
-var JeefoInjector = function (values) {
-	this.values      = assign({}, values);
+var JeefoInjector = function (instance) {
+	this.values      = {};
+	this.instance    = instance;
 	this.definitions = {};
 };
 
@@ -336,6 +379,7 @@ JeefoInjector.prototype = {
 	// resolve {{{2
 	resolve : function (name, local) {
 		var values            = this.values,
+			instance          = this.instance,
 			definitions       = this.definitions,
 			local_values      = (local && local.values) || {},
 			local_definitions = local && local.definitions,
@@ -382,7 +426,7 @@ JeefoInjector.prototype = {
 			}
 
 			// Call definition handler, invoker
-			var Result = definition.fn.apply(null, args);
+			var Result = definition.fn.apply(instance, args);
 
 			if (definition.is_constructor) {
 				Result = new Result();
@@ -407,10 +451,9 @@ JeefoInjector.prototype = {
 
 	// resolve sync {{{2
 	resolve_sync : function (name, local) {
-		var self              = this,
-			values            = self.values,
+		var values            = this.values,
 			local_values      = (local && local.values) || {},
-			definitions       = self.definitions,
+			definitions       = this.definitions,
 			local_definitions = local && local.definitions,
 			container;
 		
@@ -442,7 +485,7 @@ JeefoInjector.prototype = {
 
 		for (; i < execution_order.length; ++i) {
 			if (! local_values.hasOwnProperty(execution_order[i]) && ! values.hasOwnProperty(execution_order[i])) {
-				self.resolve_sync(execution_order[i], local);
+				this.resolve_sync(execution_order[i], local);
 			}
 		}
 
@@ -452,7 +495,7 @@ JeefoInjector.prototype = {
 				values[definition.dependencies[i]];
 		}
 
-		return (container[name] = definition.fn.apply(null, args));
+		return (container[name] = definition.fn.apply(this.instance, args));
 	},
 	// }}}2
 };
@@ -461,7 +504,7 @@ JeefoInjector.prototype = {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-06-30
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -556,6 +599,7 @@ default_injectors = {
 		"Array"             : ARRAY,
 		is_array            : is_array,
 		Injector            : JeefoInjector,
+		JeefoPromise        : JeefoPromise,
 		"object.keys"       : object_keys,
 		"object.assign"     : assign,
 		make_injectable     : make_injectable,
@@ -566,6 +610,7 @@ default_injectors = {
 		"Array"             : empty_dependencies,
 		is_array            : empty_dependencies,
 		Injector            : empty_dependencies,
+		JeefoPromise        : empty_dependencies,
 		"object.keys"       : empty_dependencies,
 		"object.assign"     : empty_dependencies,
 		make_injectable     : empty_dependencies,
@@ -579,7 +624,7 @@ make_module = function (module_name, requires, container) {
 			$name  : module_name,
 			extend : store_extend,
 		},
-		injector             = new JeefoInjector(),
+		injector             = new JeefoInjector(instance),
 		extenders            = [],
 		extends_length       = 0,
 		new_definitions      = {},
@@ -649,13 +694,15 @@ make_module = function (module_name, requires, container) {
 	function extend (instance, injectable) {
 		var	args = new ARRAY(injectable.dependencies.length);
 
-		$q.for_each_async(injectable.dependencies, function (dependency, index, next) {
+		$q.for_each_async(injectable.dependencies, function (dependency, index, next, rejector) {
 			public_injector.resolve(dependency).then(function (value) {
 				args[index] = value;
 				next();
-			});
+			}).$catch(rejector);
 		}).then(function () {
 			instance[injectable.name] = injectable.fn.apply(instance, args);
+		}).$catch(function (e) {
+			console.error(e);
 		});
 	}
 	// jshint latedef : true

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-05-10
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -33,8 +33,9 @@ var utils     = require("./utils"),
 //ignore:end
 
 // Injector {{{1
-var JeefoInjector = function (values) {
-	this.values      = assign({}, values);
+var JeefoInjector = function (instance) {
+	this.values      = {};
+	this.instance    = instance;
 	this.definitions = {};
 };
 
@@ -73,6 +74,7 @@ JeefoInjector.prototype = {
 	// resolve {{{2
 	resolve : function (name, local) {
 		var values            = this.values,
+			instance          = this.instance,
 			definitions       = this.definitions,
 			local_values      = (local && local.values) || {},
 			local_definitions = local && local.definitions,
@@ -122,7 +124,7 @@ var DEPENDENCY_NAME = PP.define("DEPENDENCY_NAME", definition.dependencies[i]);
 			}
 
 			// Call definition handler, invoker
-			var Result = definition.fn.apply(null, args);
+			var Result = definition.fn.apply(instance, args);
 
 			if (definition.is_constructor) {
 				Result = new Result();
@@ -147,10 +149,9 @@ var DEPENDENCY_NAME = PP.define("DEPENDENCY_NAME", definition.dependencies[i]);
 
 	// resolve sync {{{2
 	resolve_sync : function (name, local) {
-		var self              = this,
-			values            = self.values,
+		var values            = this.values,
 			local_values      = (local && local.values) || {},
-			definitions       = self.definitions,
+			definitions       = this.definitions,
 			local_definitions = local && local.definitions,
 			container;
 		
@@ -182,7 +183,7 @@ var DEPENDENCY_NAME = PP.define("DEPENDENCY_NAME", definition.dependencies[i]);
 
 		for (; i < execution_order.length; ++i) {
 			if (! local_values.hasOwnProperty(execution_order[i]) && ! values.hasOwnProperty(execution_order[i])) {
-				self.resolve_sync(execution_order[i], local);
+				this.resolve_sync(execution_order[i], local);
 			}
 		}
 
@@ -192,7 +193,7 @@ var DEPENDENCY_NAME = PP.define("DEPENDENCY_NAME", definition.dependencies[i]);
 				values[definition.dependencies[i]];
 		}
 
-		return (container[name] = definition.fn.apply(null, args));
+		return (container[name] = definition.fn.apply(this.instance, args));
 	},
 	// }}}2
 };

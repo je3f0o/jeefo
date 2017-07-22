@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-06-30
+* Updated at  : 2017-07-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -111,6 +111,7 @@ default_injectors = {
 		"Array"             : ARRAY,
 		is_array            : is_array,
 		Injector            : JeefoInjector,
+		JeefoPromise        : JeefoPromise,
 		"object.keys"       : object_keys,
 		"object.assign"     : assign,
 		make_injectable     : make_injectable,
@@ -121,6 +122,7 @@ default_injectors = {
 		"Array"             : empty_dependencies,
 		is_array            : empty_dependencies,
 		Injector            : empty_dependencies,
+		JeefoPromise        : empty_dependencies,
 		"object.keys"       : empty_dependencies,
 		"object.assign"     : empty_dependencies,
 		make_injectable     : empty_dependencies,
@@ -134,7 +136,7 @@ make_module = function (module_name, requires, container) {
 			$name  : module_name,
 			extend : store_extend,
 		},
-		injector             = new JeefoInjector(),
+		injector             = new JeefoInjector(instance),
 		extenders            = [],
 		extends_length       = 0,
 		new_definitions      = {},
@@ -204,13 +206,15 @@ make_module = function (module_name, requires, container) {
 	function extend (instance, injectable) {
 		var	args = new ARRAY(injectable.dependencies.length);
 
-		$q.for_each_async(injectable.dependencies, function (dependency, index, next) {
+		$q.for_each_async(injectable.dependencies, function (dependency, index, next, rejector) {
 			public_injector.resolve(dependency).then(function (value) {
 				args[index] = value;
 				next();
-			});
+			}).$catch(rejector);
 		}).then(function () {
 			instance[injectable.name] = injectable.fn.apply(instance, args);
+		}).$catch(function (e) {
+			console.error(e);
 		});
 	}
 	// jshint latedef : true
