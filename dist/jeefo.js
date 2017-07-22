@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.24
+ * jeefo     : v0.0.25
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
@@ -503,7 +503,7 @@ JeefoInjector.prototype = {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-07-21
+* Updated at  : 2017-07-22
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -568,12 +568,6 @@ make_injectable = function (name, dependencies, fn) {
 			fn           : dependencies,
 			name         : name,
 			dependencies : empty_array,
-		};
-	} else if (typeof dependencies === "string") {
-		return {
-			fn           : fn,
-			name         : name,
-			dependencies : [dependencies],
 		};
 	}
 

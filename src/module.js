@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : module.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-07-21
+* Updated at  : 2017-07-22
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -81,12 +81,6 @@ make_injectable = function (name, dependencies, fn) {
 			fn           : dependencies,
 			name         : name,
 			dependencies : empty_array,
-		};
-	} else if (IS_STRING(dependencies)) {
-		return {
-			fn           : fn,
-			name         : name,
-			dependencies : [dependencies],
 		};
 	}
 

@@ -238,6 +238,10 @@ jeefo@^0.0.12:
   version "0.0.12"
   resolved "https://registry.yarnpkg.com/jeefo/-/jeefo-0.0.12.tgz#61299e69c7f6c1a4a74ac5dc53bdecd7f0c69b01"
 
+jeefo@^0.0.24:
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/jeefo/-/jeefo-0.0.24.tgz#7bd2a044b2543228d2ac29c91792e54bf9f4f322"
+
 jeefo_core@^0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/jeefo_core/-/jeefo_core-0.0.9.tgz#afd8fb7d40ce62216dde7c8dccf47cfe177c78f2"
