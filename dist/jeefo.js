@@ -1,5 +1,5 @@
 /**
- * jeefo     : v0.0.25
+ * jeefo     : v0.0.26
  * Author    : je3f0o, <je3f0o@gmail.com>
  * Homepage  : https://github.com/je3f0o/jeefo
  * License   : The MIT License
