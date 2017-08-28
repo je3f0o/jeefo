@@ -1,0 +1,11 @@
+{
+    "name"         : "jeefo",
+    "dist"         : "dist",
+	"pre_includes" : [ "injector.js" ],
+	"files" : [
+		"jeefo/component",
+		"jeefo/router",
+		"jeefo/zone",
+		"jeefo/bootstrap"
+	]
+}

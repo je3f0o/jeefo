@@ -1,8 +1,0 @@
-[
-	"src/utils.js",
-	"src/topological_sort.js",
-	"src/promise.js",
-	"src/injector.js",
-	"src/module.js",
-	"src/jeefo.js"
-]

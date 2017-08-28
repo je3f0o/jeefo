@@ -1,40 +1,40 @@
 {
   "name": "jeefo",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "homepage": "https://github.com/je3f0o/jeefo",
-  "copyright": "2016",
-  "description": "jeefo library",
+  "copyright": "2017",
+  "description": "jeefo Front-end web application framework",
   "author": {
     "name": "je3f0o",
     "email": "je3f0o@gmail.com"
   },
   "license": "MIT",
+  "bin": "./bin/jeefo",
   "main": "index.js",
-  "scripts": {
-    "build": "node build"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/je3f0o/jeefo.git"
   },
   "keywords": [
-    "jeefo"
+    "jeefo",
+    "framework"
   ],
-  "devDependencies": {
-    "expect": "^1.20.2",
-    "fs-extra": "^0.30.0",
-    "jeefo_javascript_parser": "^0.0.5",
-    "mocha": "^3.0.2",
-    "uglify-js": "^2.7.3"
+  "dependencies": {
+    "fs-extra": "^4.0.1",
+    "jeefo-getopt": "^0.0.2",
+    "jeefo_animate": "^0.0.1",
+    "jeefo_bootstrap": "^0.0.1",
+    "jeefo_component": "^0.0.2",
+    "jeefo_javascript_parser": "^0.0.16",
+    "jeefo_jqlite": "^0.0.2",
+    "jeefo_preprocessor": "^0.0.3",
+    "jeefo_resource": "^0.0.1",
+    "jeefo_router": "^0.0.3",
+    "jeefo_template": "^0.0.18",
+    "jeefo_tokenizer": "^0.0.29",
+    "jeefo_utils": "^0.0.1",
+    "jeefo_zone": "^0.0.2"
   },
-  "uglify_config": {
-    "mangle": {
-      "toplevel": true
-    },
-    "compress": {
-      "comparisons": false
-    },
-    "fromString": true
-  },
-  "dependencies": {}
+  "devDependencies": {}
 }

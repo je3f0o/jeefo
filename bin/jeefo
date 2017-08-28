@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+"use strict";
+
+let jeefo  = require("../index"),
+	getopt = require("jeefo-getopt");
+
+var opt = getopt([
+	["b" , "build"             , "Build"                   ] ,
+	["w" , "watch"             , "Watch changes"           ] ,
+	["i" , "input-directory="  , "Input directory"         ] ,
+	["h" , "help"              , "TODO: Later ..."         ]
+]).parse_system();
+
+jeefo(opt.options, opt.argv);
