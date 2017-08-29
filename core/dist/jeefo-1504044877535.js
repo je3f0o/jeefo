@@ -3,7 +3,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-08-29
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -85,8 +85,8 @@ var jeefo = window.jeefo = (function () {
 				directives[selectors[i]] = path;
 			}
 		},
-		state : function (name, path) {
-			states.push({ name : name, path : path });
+		state : function (path) {
+			states.push(path);
 		}
 	};
 }());
@@ -1882,7 +1882,7 @@ jeefo.register("node_modules/jeefo_component/collect_components.js", function (r
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : collect_components.js
 * Created at  : 2017-08-10
-* Updated at  : 2017-08-28
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -1948,8 +1948,10 @@ combine_template = function (template, node) {
 	node.events     = combine_pairs(other.events, node.events);
 	node.class_list = combine_classes(other.class_list, node.class_list.list);
 
-	transclude(other.children, node.children);
-	node.children = other.children;
+	if (other.children.length) {
+		transclude(other.children, node.children);
+		node.children = other.children;
+	}
 };
 
 collect_components = function (nodes, container, parent, counter) {
@@ -3593,86 +3595,37 @@ jeefo.register("node_modules/jeefo_router/ui_view_component.js", function (requi
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : ui_view_component.js
 * Created at  : 2017-07-17
-* Updated at  : 2017-08-29
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description : 
 _._._._._._._._._._._._._._._._._._._._._.*/
 
-var $q                        = require("node_modules/jeefo_q/index.js"),
-	assign                    = require("node_modules/jeefo_utils/object/assign.js"),
-	jqlite                    = require("node_modules/jeefo_jqlite/index.js"),
-	is_array                  = Array.isArray,
+require("node_modules/jeefo_router/ui_view_component_component.js");
+
+var jqlite                    = require("node_modules/jeefo_jqlite/index.js"),
+	resolve                   = require("node_modules/jeefo_router/resolve.js"),
 	$animator                 = require("node_modules/jeefo_animate/index.js"),
 	state_service             = require("node_modules/jeefo_router/state_service.js"),
 	compile_template          = require("node_modules/jeefo_component/compiler/template.js"),
-	make_directive_controller = require("node_modules/jeefo_component/make_directive_controller.js");
+	make_directive_controller = require("node_modules/jeefo_component/make_directive_controller.js"),
 
-require("node_modules/jeefo_router/ui_view_component_component.js");
-
-function resolve (component, state) {
-	if (! state.resolve) { return $q.when([]); }
-
-	state.values = assign({}, state.data);
-
-	var id = component.state_id;
-	return __resolve(state, "controller").then(function (args) {
-		if (component.state_id !== id) {
-			throw "deactivated";
-		}
-		return args;
-	});
-
-	function __resolve(object, property) {
-		var dependencies = object[property].dependencies,
-			i = dependencies.length, resolvers = new Array(i);
-
-		while (i--) {
-			if (state.values[dependencies[i]]) {
-				resolvers[i] = state.values[dependencies[i]];
-			} else if (state.resolve[dependencies[i]]) {
-				resolvers[i] = _resolve(state.resolve, dependencies[i]);
-			} else {
-				//resolvers[i] = $injector.resolve(dependencies[i]);
-			}
-		}
-
-		return $q.all(resolvers);
-	}
-
-	function _resolve (object, property) {
-		if (typeof object[property] === "function") {
-			return $q.when(object[property]());
-		} else if (is_array(object[property])) {
-			object[property]    = { dependencies : object[property] };
-			object[property].fn = object[property].dependencies.pop();
-		}
-
-		return __resolve(object, property).then(function (args) {
-			return object[property].fn.apply(null, args);
-		});
-	}
-};
-
-var construct = function (component, state) {
-	var controller = component.controller;
+construct = function (self, component, state) {
 	if (state.parent) {
 		state.parent.children.push(state);
 	}
 
 	// Active
-	controller.$state        = state;
-	controller.$is_activated = state.is_activated = true;
+	self.$state        = state;
+	self.$is_activated = state.is_activated = true;
 
 	if (state.controller && ! state.controller.Controller) {
 		make_directive_controller(state.controller);
 	}
 
 	return resolve(component, state).then(function (args) {
-		var element    = compile_template(controller.template, component).firstChild,
+		var element    = compile_template(self.template, component).firstChild,
 			_component = component.children[component.children.length - 1];
-
-		_component.$element = jqlite(element);
 
 		if (state.controller) {
 			_component.controller = new state.controller.Controller();
@@ -3681,12 +3634,12 @@ var construct = function (component, state) {
 		}
 
 		element.appendChild(compile_template(state.template, _component));
-		if (component.last_component) {
-			component.last_component.$element.after(_component.$element[0]);
+		if (self.last_component) {
+			self.last_component.$element.after(_component.$element[0]);
 		} else {
-			controller.$comment.after(_component.$element[0]);
+			self.$comment.after(_component.$element[0]);
 		}
-		component.last_component = _component;
+		self.last_component = _component;
 
 		if (! state.parent || state.parent.is_rendered) {
 			state.is_rendered = true;
@@ -3694,6 +3647,41 @@ var construct = function (component, state) {
 			$animator.enter(_component.$element);
 		}
 	});
+},
+
+event_handler = function (self, state, component) {
+	self.state_id += 1;
+
+	// Deactive leaving states {{{1
+	if (state.is_activated) {
+		if (self.$state && self.$state.parent === state) {
+			self.destroy();
+		}
+		return;
+	}
+
+	// Replace UI {{{1
+	if (self.$is_activated) {
+		while (state) {
+			if (self.$state === state) {
+				return;
+			} else if (self.$state.parent === state.parent) {
+				self.destroy();
+				construct(self, component, state);
+				break;
+			}
+			state = state.parent;
+		}
+		return;
+	}
+	// }}}1
+
+	while (state.parent && ! state.parent.is_activated) {
+		state = state.parent;
+	}
+	
+	// Construct
+	construct(self, component, state);
 };
 
 module.exports = {
@@ -3727,53 +3715,12 @@ module.exports = {
 
 			// Event handler
 			if (state_service.current) {
-				_event_handler(self, state_service.current);
+				event_handler(self, state_service.current, $component);
 			}
 
 			self.event_handler = state_service.on("state_changed", function (event, state) {
-				_event_handler(self, state);
+				event_handler(self, state, $component);
 			});
-
-			// jshint latedef : false
-			return;
-
-			// Event handler {{{1
-			function _event_handler (self, state) {
-				self.state_id += 1;
-
-				// Deactive leaving states {{{2
-				if (state.is_activated) {
-					if (self.$state && self.$state.parent === state) {
-						self.destroy();
-					}
-					return;
-				}
-
-				// Replace UI {{{2
-				if (self.$is_activated) {
-					while (state) {
-						if (self.$state === state) {
-							return;
-						} else if (self.$state.parent === state.parent) {
-							self.destroy();
-							construct($component, state);
-							break;
-						}
-						state = state.parent;
-					}
-					return;
-				}
-				// }}}2
-
-				while (state.parent && ! state.parent.is_activated) {
-					state = state.parent;
-				}
-				
-				// Construct
-				construct($component, state);
-			}
-			// }}}1
-			// jshint latedef : true
 		},
 		on_render : function () {
 			if (this.$state) {
@@ -3808,11 +3755,81 @@ module.exports = {
 
 jeefo.component(["ui-view"], "node_modules/jeefo_router/ui_view_component.js");
 
+jeefo.register("node_modules/jeefo_router/ui_view_component_component.js", function (require, exports, module) {
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : ui_view_component_component.js
+* Created at  : 2017-08-10
+* Updated at  : 2017-08-10
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+module.exports = {};
+});
+
+jeefo.component(["ui-view-component"], "node_modules/jeefo_router/ui_view_component_component.js");
+
+jeefo.register("node_modules/jeefo_router/resolve.js", function (require, exports, module) {
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : resolve.js
+* Created at  : 2017-08-30
+* Updated at  : 2017-08-30
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+var $q     = require("node_modules/jeefo_q/index.js"),
+	assign = require("node_modules/jeefo_utils/object/assign.js"),
+	get_resolvers, resolve_dependencies;
+
+get_resolvers = function (state, dependencies) {
+	var i = dependencies.length, resolvers = new Array(i);
+
+	while (i--) {
+		if (state.values[dependencies[i]]) {
+			resolvers[i] = state.values[dependencies[i]];
+		} else {
+			resolvers[i] = resolve_dependencies(state, state.resolve[dependencies[i]]);
+		}
+	}
+
+	return resolvers;
+};
+
+resolve_dependencies = function (state, dependency) {
+	if (typeof dependency === "function") {
+		return $q.when(dependency());
+	}
+
+	return $q.all(get_resolvers(state, dependency.dependencies)).then(function (args) {
+		return dependency.fn.apply(null, args);
+	});
+};
+
+module.exports = function resolve (component, state) {
+	if (! state.resolve) { return $q.when([]); }
+
+	state.values = assign({}, state.data);
+
+	var id        = component.state_id,
+		resolvers = get_resolvers(state, state.controller.dependencies);
+
+	return $q.all(resolvers).then(function (args) {
+		if (component.state_id !== id) {
+			throw "deactivated";
+		}
+		return args;
+	});
+};
+});
+
 jeefo.register("node_modules/jeefo_router/state_service.js", function (require, exports, module) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : state_service.js
 * Created at  : 2017-07-01
-* Updated at  : 2017-08-24
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description : 
@@ -3833,11 +3850,21 @@ destroy = function () {
 	this.is_activated = this.is_rendered = false;
 },
 
+get_parent_name = function (name) {
+	var index = name.lastIndexOf('.');
+	if (index !== -1) {
+		return name.substring(0, index);
+	}
+},
+
 State = function State () {
 	var self = this;
-	self.list   = [];
-	self.states = {};
-	self.events = {};
+
+	self.list    = [];
+	self.states  = {};
+	self.events  = {};
+	self.penders = Object.create(null);
+
 	var to_replace = true;
 
 	//history.replaceState(null, null, location.pathname);
@@ -3859,13 +3886,23 @@ State = function State () {
 };
 
 State.prototype = {
-	register : function (name, state) {
-		var parent = this.get_parent(name);
+	register : function (state) {
+		var parent_name = get_parent_name(state.name);
 
-		state.name = name;
+		if (parent_name) {
+			var parent = this.states[parent_name];
 
-		if (parent) {
-			state.pattern = new Pattern(state.url, parent.pattern);
+			if (parent) {
+				state.pattern = new Pattern(state.url, parent.pattern);
+			} else {
+				if (this.penders[parent_name]) {
+					this.penders[parent_name].push(state);
+				} else {
+					this.penders[parent_name] = [state];
+				}
+
+				return this;
+			}
 		} else {
 			state.pattern = new Pattern(state.url);
 		}
@@ -3874,27 +3911,19 @@ State.prototype = {
 		state.destroy = destroy;
 
 		this.list.push(state);
-		this.states[name] = state;
+		this.states[state.name] = state;
+
+		if (this.penders[state.name]) {
+			var penders = this.penders[state.name], i = penders.length;
+
+			while (i--) {
+				this.register(penders[i]);
+			}
+
+			this.penders[state.name] = null;
+		}
 
 		return this;
-	},
-	get_parent : function (name) {
-		var i = 0, parts = name.split('.'), len = parts.length - 2;
-
-		for (; i < len; ++i) {
-			if (! parts[i].trim()) {
-				return false;
-			}
-		}
-
-		name = parts.pop();
-		if (! name) {
-			throw new Error("Invalid end of state name");
-		}
-
-		if (parts.length) {
-			return this.states[parts.join('.')];
-		}
 	},
 	get : function (url) {
 		var current;
@@ -3970,7 +3999,7 @@ jeefo.register("node_modules/jeefo_router/pattern.js", function (require, export
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : pattern.js
 * Created at  : 2017-08-06
-* Updated at  : 2017-08-24
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -3979,7 +4008,42 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 var assign    = require("node_modules/jeefo_utils/object/assign.js"),
 	tokenizer = require("node_modules/jeefo_router/tokenizer.js"),
 
-Pattern = function (url, parent) {
+build_url = function (tokens, params) {
+	var url = '';
+
+	tokens.forEach(function (token) {
+		switch (token.type) {
+			case "OptionalGroup" :
+				url += build_url(token.tokens, params);
+				break;
+			case "Key" :
+				url += params[token.key];
+				break;
+			case "Explicit" :
+				url += token.value;
+				break;
+			default:
+				console.log("Unhandled token", token);
+		}
+	});
+
+	return url;
+},
+
+parse_params = function (match, tokens, params) {
+	tokens.forEach(function (token) {
+		switch (token.type) {
+			case "OptionalGroup" :
+				parse_params(match, token.tokens, params);
+				break;
+			case "Key" :
+				params[token.key] = match[token.index];
+				break;
+		}
+	});
+};
+
+var Pattern = function (url, parent) {
 	var self = this, tokens = [], last_token;
 
 	if (parent) {
@@ -4061,49 +4125,10 @@ Pattern.prototype = {
 	},
 	parse_params : function (match) {
 		this.params = {};
-		// jshint latedef : false
 		return parse_params(match, this.tokens, this.params);
-
-		function parse_params (match, tokens, params) {
-			tokens.forEach(function (token) {
-				switch (token.type) {
-					case "OptionalGroup" :
-						parse_params(match, token.tokens, params);
-						break;
-					case "Key" :
-						params[token.key] = match[token.index];
-						break;
-				}
-			});
-		}
-		// jshint latedef : true
 	},
 	url : function () {
-		// jshint latedef : false
 		return build_url(this.tokens, this.params);
-
-		function build_url (tokens, params) {
-			var url = '';
-
-			tokens.forEach(function (token) {
-				switch (token.type) {
-					case "OptionalGroup" :
-						url += build_url(token.tokens, params);
-						break;
-					case "Key" :
-						url += params[token.key];
-						break;
-					case "Explicit" :
-						url += token.value;
-						break;
-					default:
-						console.log("Unhandled token", token);
-				}
-			});
-
-			return url;
-		}
-		// jshint latedef : true
 	}
 };
 
@@ -4247,21 +4272,6 @@ module.exports = function compile_template (template, parent) {
 	return compile_nodes(parser(template), parent);
 };
 });
-
-jeefo.register("node_modules/jeefo_router/ui_view_component_component.js", function (require, exports, module) {
-/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-* File Name   : ui_view_component_component.js
-* Created at  : 2017-08-10
-* Updated at  : 2017-08-10
-* Author      : jeefo
-* Purpose     :
-* Description :
-_._._._._._._._._._._._._._._._._._._._._.*/
-
-module.exports = {};
-});
-
-jeefo.component(["ui-view-component"], "node_modules/jeefo_router/ui_view_component_component.js");
 
 jeefo.register("node_modules/jeefo_router/router_link_directive.js", function (require, exports, module) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
@@ -4446,7 +4456,7 @@ jeefo.register("node_modules/jeefo_bootstrap/index.js", function (require, expor
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-07-16
-* Updated at  : 2017-08-29
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -4496,7 +4506,7 @@ invoke_change_detector = function (component) {
 };
 
 while (i--) {
-	state_service.register(states[i].name, require(states[i].path));
+	state_service.register(require(states[i]));
 }
 
 //zone.on_enter = function () { console.log("ENTER"); };

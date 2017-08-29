@@ -31,7 +31,10 @@ module.exports = function compile (to_build) {
 	}
 
 	if (config.jeefo.main) {
-		post_includes += '\n\njeefo.require("node_modules/jeefo_bootstrap/index.js")(document);';
+		post_includes += `
+
+jeefo.require("${ config.main }");
+jeefo.require("node_modules/jeefo_bootstrap/index.js")(document);`;
 	}
 
 	code = `(function (${ params }) { "use strict";\n\n${ pre_includes }${ code }${ post_includes }\n\n}(${ args }));`;

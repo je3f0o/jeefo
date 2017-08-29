@@ -19,16 +19,6 @@ var fse        = require("fs-extra"),
 	colors     = require("./colors"),
 	load_cores = require("./load_cores");
 
-var join = function () {
-	var file_path = path.join.apply(path, arguments);
-
-	if (! file_path.endsWith(".js")) {
-		file_path += ".js";
-	}
-
-	return file_path;
-};
-
 var pre_includes = function (config) {
 	if (config.jeefo.pre_includes) {
 		config.jeefo.pre_includes.forEach(filepath => {
@@ -55,17 +45,19 @@ module.exports = function initialize (config/*, options */) {
 	config.files_cache_path  = path.join(config.basedir, ".cache/files.json");
 	config.config_cache_path = path.join(config.basedir, ".cache/config.json");
 
+	pre_includes(config);
+
+	var path_resolve = require("./parser/path_resolver");
+
 	// app name
 	if (jeefo.main) {
 		load_cores(config);
+		config.main = path_resolve('.', `./${ jeefo.main }`).path;
 		config.files.push(`./${ jeefo.main }`);
 	} else {
 		config.files = config.files.concat(jeefo.files);
 	}
 
-	pre_includes(config);
-
-	var path_resolve = require("./parser/path_resolver");
 	config.files = config.files.map(file_path => path_resolve('.', file_path));
 
 	/*

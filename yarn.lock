@@ -32,13 +32,13 @@ jeefo_animate@^0.0.1:
     jeefo_q "^0.0.1"
     jeefo_utils "^0.0.1"
 
-jeefo_bootstrap@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/jeefo_bootstrap/-/jeefo_bootstrap-0.0.1.tgz#86f5282990fa9df7fd043a2b1030b6206a7e8e0d"
+jeefo_bootstrap@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jeefo_bootstrap/-/jeefo_bootstrap-0.0.3.tgz#321d6905c8d5c316978b2afb8e497b762925d69c"
 
-jeefo_component@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.2.tgz#6b23991574273c8e860c16aad658782206034bf1"
+jeefo_component@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.3.tgz#381905ec0f7a8e5f3e41ef1d3b4fb943d145363a"
 
 jeefo_javascript_beautifier@^0.0.5:
   version "0.0.5"
@@ -81,9 +81,9 @@ jeefo_resource@^0.0.1:
   dependencies:
     jeefo_q "^0.0.1"
 
-jeefo_router@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.3.tgz#30ccd0d7c38c4e7d61fd224921c10d7c5b3dc97d"
+jeefo_router@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.4.tgz#19f72db59c15297e3a2b81ec7ad33692bdaa9f97"
 
 jeefo_template@^0.0.18:
   version "0.0.18"

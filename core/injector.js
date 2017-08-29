@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-08-29
+* Updated at  : 2017-08-30
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -83,8 +83,8 @@ var jeefo = window.jeefo = (function () {
 				directives[selectors[i]] = path;
 			}
 		},
-		state : function (name, path) {
-			states.push({ name : name, path : path });
+		state : function (path) {
+			states.push(path);
 		}
 	};
 }());
