@@ -141,7 +141,7 @@ jeefo.register("node_modules/jeefo_component/for_each_directive.js", function (r
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : for_each_directive.js
 * Created at  : 2017-07-25
-* Updated at  : 2017-08-28
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -220,7 +220,7 @@ module.exports = {
 				removed_components = children.splice(i);
 				i = removed_components.length;
 				while (i--) {
-					removed_components[i].remove();
+					removed_components[i].children[0].remove();
 				}
 
 				if (children.length) {
@@ -236,8 +236,8 @@ module.exports = {
 			component.controller_as = this.name;
 			component.controller[this.name] = value;
 			
-			var fragment = compile_nodes([node], component);
-			component.$element = jqlite(fragment.firstChild);
+			compile_nodes([node], component);
+			component.$element = component.children[0].$element;
 
 			this.$component.children[index] = component;
 			this.$last_element.after(component.$element[0]);
@@ -742,14 +742,14 @@ jeefo.register("node_modules/jeefo_animate/index.js", function (require, exports
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-07-31
-* Updated at  : 2017-08-24
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 
 var $q           = require("node_modules/jeefo_q/index.js"),
-	polifyll     = require("node_modules/jeefo_polifyll/index.js"),
+	polifyll     = require("node_modules/jeefo_polyfill/index.js"),
 	array_remove = require("node_modules/jeefo_utils/array/remove.js");
 
 var set_timeout = setTimeout;
@@ -1038,9 +1038,9 @@ module.exports = {
 
 jeefo.register("node_modules/jeefo_promise/index.js", function (require, exports, module) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-* File Name   : index.js
+* File Name   : promise.js
 * Created at  : 2016-09-01
-* Updated at  : 2017-08-24
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -1170,8 +1170,8 @@ var JeefoPromise = function (promise_handler, callback, args) {
 						? next_resolver(rejector(result))
 						: next_rejector(result);
 				default:
-					pendings[pendings_length]      = resolver || get_result;
-					pendings[pendings_length + 1]      = rejector;
+					pendings[pendings_length]     = resolver || get_result;
+					pendings[pendings_length + 1] = rejector || get_result;
 					pendings[pendings_length + 2] = next_resolver;
 					pendings[pendings_length + 3] = next_rejector;
 					pendings_length += 4;
@@ -1201,7 +1201,7 @@ var JeefoPromise = function (promise_handler, callback, args) {
 module.exports = JeefoPromise;
 });
 
-jeefo.register("node_modules/jeefo_polifyll/index.js", function (require, exports, module) {
+jeefo.register("node_modules/jeefo_polyfill/index.js", function (require, exports, module) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-08-03
@@ -1256,7 +1256,7 @@ jeefo.register("node_modules/jeefo_javascript_parser/src/es5/tokenizer.js", func
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : tokenizer.js
 * Created at  : 2017-04-08
-* Updated at  : 2017-08-18
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -1440,7 +1440,7 @@ register({
 			character   = streamer.next();
 			start_index = streamer.cursor.index;
 
-			while (character && character >= ' ' && character !== quote) {
+			while (character && (character >= ' ' || character === '\t') && character !== quote) {
 				if (character === '\\') {
 					streamer.next();
 				}
@@ -1882,7 +1882,7 @@ jeefo.register("node_modules/jeefo_component/collect_components.js", function (r
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : collect_components.js
 * Created at  : 2017-08-10
-* Updated at  : 2017-08-30
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -1897,26 +1897,16 @@ var cache       = require("node_modules/jeefo_component/cache.js"),
 	transcluder = require("node_modules/jeefo_component/transcluder.js"),
 	combine_template, collect_components,
 
-sort_by_priority = function (a, b) {
-	return b.definition.priority - a.definition.priority;
-},
-
 combine_pairs = function (pairs, other) {
-	var keys = other.keys, i = keys.length;
-
-	while (i--) {
+	for (var i = 0, keys = other.keys; i < keys.length; ++i) {
 		pairs.set(keys[i], other.values[keys[i]]);
 	}
-
-	return pairs;
 },
 
 combine_classes = function (class_list, other_list) {
 	for (var i = 0; i < other_list.length; ++i) {
 		class_list.add(other_list[i]);
 	}
-
-	return class_list;
 },
 
 transclude = function (nodes, children) {
@@ -1927,84 +1917,110 @@ transclude = function (nodes, children) {
 	}
 
 	transcluder.transclude();
+},
+
+structural_directive = function (attrs) {
+	var keys = attrs.keys, i = keys.length, max_priority = 0,
+		definition, result;
+
+	while (i--) {
+		if (directives[keys[i]]) {
+			definition = cache.resolve_directive(keys[i]);
+			if (definition.priority > max_priority) {
+				result = { name : keys[i], definition : definition };
+			}
+		}
+	}
+
+	if (result) {
+		attrs.remove(result.name);
+	}
+
+	return result;
 };
 
 combine_template = function (template, node) {
 	if (typeof template === "function") {
 		template = template(node);
 		if (! template) {
-			return;
+			return node;
 		}
 	}
 
 	var nodes = parser(template), other = nodes[0];
 	
-	if (! node.id) {
-		node.id = other.id;
-	}
-
 	// Reason why other's property first is, we want keep other's order
-	node.attrs      = combine_pairs(other.attrs, node.attrs);
-	node.events     = combine_pairs(other.events, node.events);
-	node.class_list = combine_classes(other.class_list, node.class_list.list);
+	combine_pairs(other.attrs, node.attrs);
+	combine_pairs(other.events, node.events);
+	combine_classes(other.class_list, node.class_list.list);
 
-	if (other.children.length) {
-		transclude(other.children, node.children);
-		node.children = other.children;
-	}
+	return other;
 };
 
 collect_components = function (nodes, container, parent, counter) {
-	var i = 0, component = new Component(parent), j, keys, attrs, _parent, directive;
+	var i = 0, component = new Component(parent),
+		j, keys, name, attrs, other, _parent, directive;
 
 	for (; i < nodes.length; ++i) {
-		attrs   = nodes[i].attrs;
+		name    = nodes[i].name;
 		_parent = parent;
 
-		if (components[nodes[i].name]) {
-			component.name       = nodes[i].name;
-			component.definition = cache.resolve_component(component.name);
-			nodes[i].name        = "div";
+		// Structural directive
+		directive = structural_directive(nodes[i].attrs);
+		if (directive) {
+			counter.increment();
 
-			if (component.definition.template) {
-				combine_template(component.definition.template, nodes[i]);
-			}
+			component.id    = nodes[i].component_id = counter.id;
+			component.attrs = nodes[i].attrs;
+
+			component.node       = nodes[i].clone();
+			component.name       = directive.name;
+			component.definition = directive.definition;
+
+			nodes[i].clear();
+
+			container.push(component);
+			component = new Component(parent);
+
+			continue;
 		}
 
-		keys = attrs.keys;
-		j    = keys.length;
+		// Component
+		if (components[name]) {
+			component.name       = name;
+			component.definition = cache.resolve_component(name);
+
+			other = combine_template(component.definition.template || "div", nodes[i]);
+
+			if (other.children.length) {
+				transclude(other.children, nodes[i].children);
+			} else {
+				other.children = nodes[i].children;
+			}
+
+			nodes[i] = other;
+		}
+
+		// Normal directives
+		attrs = nodes[i].attrs;
+		keys  = attrs.keys;
+		j     = keys.length;
 		while (j--) {
 			if (directives[keys[j]]) {
 				component.directives.push(
 					new Directive(keys[j], cache.resolve_directive(keys[j]))
 				);
+
+				attrs.remove(keys[i]);
 			}
 		}
 
 		if (component.name || nodes[i].events.keys.length || component.directives.length) {
 			counter.increment();
 
-			component.id    = nodes[i].component_id = counter.id;
-			component.attrs = attrs;
-
-			component.directives.sort(sort_by_priority);
-			directive = component.directives[0];
-			if (directive && directive.definition.priority) {
-				attrs.remove(directive.name);
-
-				component.node       = nodes[i].clone();
-				component.name       = directive.name;
-				component.definition = directive.definition;
-				component.directives = [];
-
-				nodes[i].clear();
-			} else {
-				j = component.directives.length;
-				while (j--) {
-					attrs.remove(component.directives[j].name);
-				}
-				component.events = nodes[i].events;
-			}
+			component.id     = nodes[i].component_id = counter.id;
+			component.attrs  = attrs;
+			component.events = nodes[i].events;
 
 			_parent = component;
 			container.push(component);
@@ -2794,7 +2810,7 @@ jeefo.register("node_modules/jeefo_component/component.js", function (require, e
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : component.js
 * Created at  : 2017-07-24
-* Updated at  : 2017-08-26
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     : Make possible to create a self contained web component.
 * Description : Internal class of Jeefo-Framework's jeefo.directive module.
@@ -2858,36 +2874,34 @@ find_controller = function (component, dependency) {
 },
 
 compile_self = function (component) {
-	if (! component.name) { return component; }
+	if (! component.name) {
+		return $q.when(component);
+	}
 
-	// jshint latedef : false
-	return $q.when(component).
-		then(function (component) {
-			/*
-			var $attrs   = new Attributes(component.element),
-				template = get_template(component.definition.template, component.element, $attrs);
+	/*
+	var $attrs   = new Attributes(component.element),
+		template = get_template(component.definition.template, component.element, $attrs);
 
-			if (template) {
-				return compile_template(component, template, $attrs);
-			}
+	if (template) {
+		return compile_template(component, template, $attrs);
+	}
 
-			var template_url = get_template(component.definition.template_url, component.element, $attrs);
-			if (template_url) {
-				return $resource.get_text(template_url).then(function (template) {
-					return compile_template(component, template, $attrs);
-				});
-			}
-
-			return compile_template(component, "<div></div>", $attrs);
-			*/
-			return component;
-		}).
-		then(function (component) {
-			component.$element = jqlite(component.element);
-			constructor(component, component);
-
-			return component;
+	var template_url = get_template(component.definition.template_url, component.element, $attrs);
+	if (template_url) {
+		return $resource.get_text(template_url).then(function (template) {
+			return compile_template(component, template, $attrs);
 		});
+	}
+
+	return compile_template(component, "<div></div>", $attrs);
+	*/
+
+	return $q.when(component).then(function (component) {
+		component.$element = jqlite(component.element);
+		constructor(component, component);
+
+		return component;
+	});
 },
 
 // Post directives {{{1
@@ -2922,11 +2936,8 @@ listen_events = function (component) {
 },
 
 // Link {{{1
-link = function (component) {
-	return;
-	if (self.is_terminated || ! self.definition) { return self; }
-
-	if (self.definition.link) {
+link = function (self) {
+	if (self.definition && self.definition.link) {
 		var args = [], dependencies = self.definition.link.dependencies, i = dependencies.length;
 
 		while (i--) {
@@ -3011,8 +3022,7 @@ Component.prototype = {
 	compile : function () {
 		this.parent.children.push(this);
 
-		return $q.when(this).
-			then(compile_self).
+		return compile_self(this).
 			then(compile_post).
 			then(listen_events).
 			then(link).
@@ -3595,7 +3605,7 @@ jeefo.register("node_modules/jeefo_router/ui_view_component.js", function (requi
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : ui_view_component.js
 * Created at  : 2017-07-17
-* Updated at  : 2017-08-30
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description : 
@@ -3623,7 +3633,7 @@ construct = function (self, component, state) {
 		make_directive_controller(state.controller);
 	}
 
-	return resolve(component, state).then(function (args) {
+	return resolve(self, component, state).then(function (args) {
 		var element    = compile_template(self.template, component).firstChild,
 			_component = component.children[component.children.length - 1];
 
@@ -3646,6 +3656,8 @@ construct = function (self, component, state) {
 			_component.trigger_render();
 			$animator.enter(_component.$element);
 		}
+	}).$catch(function (e) {
+		console.error(e);
 	});
 },
 
@@ -3774,7 +3786,7 @@ jeefo.register("node_modules/jeefo_router/resolve.js", function (require, export
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : resolve.js
 * Created at  : 2017-08-30
-* Updated at  : 2017-08-30
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -3808,16 +3820,16 @@ resolve_dependencies = function (state, dependency) {
 	});
 };
 
-module.exports = function resolve (component, state) {
+module.exports = function resolve (self, component, state) {
 	if (! state.resolve) { return $q.when([]); }
 
 	state.values = assign({}, state.data);
 
-	var id        = component.state_id,
+	var id        = self.state_id,
 		resolvers = get_resolvers(state, state.controller.dependencies);
 
 	return $q.all(resolvers).then(function (args) {
-		if (component.state_id !== id) {
+		if (self.state_id !== id) {
 			throw "deactivated";
 		}
 		return args;
@@ -4307,6 +4319,48 @@ module.exports = {
 
 jeefo.directive(["router-link"], "node_modules/jeefo_router/router_link_directive.js");
 
+jeefo.register("node_modules/jeefo_timeout/index.js", function (require, exports, module) {
+/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+* File Name   : timeout.js
+* Created at  : 2017-08-11
+* Updated at  : 2017-08-30
+* Author      : jeefo
+* Purpose     :
+* Description :
+_._._._._._._._._._._._._._._._._._._._._.*/
+
+var $q          = require("node_modules/jeefo_q/index.js"),
+	defers      = Object.create(null),
+	set_timeout = setTimeout;
+
+var $timeout = module.exports = function (fn, delay) {
+	var deferred = $q.defer(),
+		promise  = deferred.promise;
+
+	promise.$timeout_id = set_timeout(function () {
+		try {
+			deferred.resolve(fn());
+		} catch (e) {
+			deferred.reject(e);
+		} finally {
+			delete defers[promise.$timeout_id];
+		}
+	}, delay);
+	
+	defers[promise.$timeout_id] = deferred;
+
+	return promise;
+};
+
+$timeout.cancel = function cancel (promise) {
+	if (promise && defers[promise.$timeout_id]) {
+		defers[promise.$timeout_id].reject("canceled");
+		delete defers[promise.$timeout_id];
+		return clearTimeout(promise.$timeout_id);
+	}
+};
+});
+
 jeefo.register("node_modules/jeefo_zone/index.js", function (require, exports, module) {
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
@@ -4541,7 +4595,7 @@ jeefo.register("node_modules/jeefo_component/compiler/element.js", function (req
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : element.js
 * Created at  : 2017-08-26
-* Updated at  : 2017-08-26
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -4596,11 +4650,11 @@ collect_components_from_element = function (element, container, parent, counter)
 		if (components[name]) {
 			$old_element = jqlite(node);
 
-			node = new NodeElement({ name : name });
-			build_nodes(node, $old_element[0]);
+			node = [ new NodeElement({ name : name }) ];
+			build_nodes(node[0], $old_element[0]);
 
-			collect_components([node], container, parent, counter);
-			node = jqlite(node.compile('', ''))[0];
+			collect_components(node, container, parent, counter);
+			node = jqlite(node[0].compile('', ''))[0];
 
 			$old_element.replace_with(node);
 		} else {

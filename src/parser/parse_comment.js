@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_comment.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-08-20
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :

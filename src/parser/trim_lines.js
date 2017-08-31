@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : trim_lines.js
 * Created at  : 2017-08-20
-* Updated at  : 2017-08-20
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -16,7 +16,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 var get_string = require("jeefo_preprocessor/src/actions/es5/get_string");
 
 module.exports = (_pp, token) => {
-	var pp     = _pp.$new(token.template),
+	var pp     = _pp.$new(token),
 		body   = pp.parse(pp.code)[0].expression.body,
 		values = [], i = body.length, tl_pp;
 

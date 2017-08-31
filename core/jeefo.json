@@ -5,6 +5,7 @@
 	"files" : [
 		"jeefo/component",
 		"jeefo/router",
+		"jeefo/timeout",
 		"jeefo/zone",
 		"jeefo/bootstrap"
 	]

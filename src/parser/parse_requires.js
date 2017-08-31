@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_requires.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-08-29
+* Updated at  : 2017-08-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -31,8 +31,10 @@ var call_expression = pp.actions.handlers.CallExpression;
 
 pp.actions.handlers.TaggedTemplateLiteral = (_pp, token) => {
 	switch (token.tag.name) {
+		case "JT_PRE"     :
 		case "TRIM_LINES" :
-			return trim_lines(_pp, token);
+			var replace = trim_lines(_pp, token.template);
+			return _pp.replace(token, replace.value);
 		default:
 			console.log(_pp.code);
 			console.log(token);
