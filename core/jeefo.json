@@ -1,6 +1,7 @@
 {
-    "name"         : "jeefo",
-    "dist"         : "dist",
+    "type"         : "dll",
+	"cache"        : true,
+	"output"       : false,
 	"pre_includes" : [ "injector.js" ],
 	"files" : [
 		"jeefo/component",

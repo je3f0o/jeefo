@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : path_resolver.js
 * Created at  : 2017-08-08
-* Updated at  : 2017-08-29
+* Updated at  : 2017-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -16,14 +16,12 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 let fse        = require("fs-extra"),
 	path       = require("path"),
 	config     = require("../config"),
-	basedir    = config.basedir,
 	global_dir = config.global_dir,
 
-	base_node_modules     = path.join(basedir, "node_modules"),
-	base_file_path_offset = basedir.length + 1,
-
 	global_node_modules     = path.join(config.global_dir, "node_modules"),
-	global_file_path_offset = config.global_dir.length + 1;
+	global_file_path_offset = config.global_dir.length + 1,
+
+	basedir, base_node_modules, base_file_path_offset;
 
 var resolve = function (paths) {
 	var i = paths.length;
@@ -108,47 +106,14 @@ var parse_relative_path = function (dirname, file_path, is_global) {
 	return resolve(paths);
 };
 
-module.exports = (dirname, file_path, is_global) => {
+module.exports = function path_resolver (dirname, file_path, is_global) {
 	return (file_path.charAt(0) === '.')
 		? parse_relative_path(dirname, file_path, is_global)
 		: parse_absolute_path(dirname, file_path);
 };
 
-/* {{{1
-module.exports = (dirname, file_path) => {
-	var file_path = file.path, dir, index, absolute_path;
-	if (file_path.charAt(0) === '.') {
-		
-	}
-	
-	if (! file_path.endsWith(".js")) {
-		file_path += ".js";
-	}
-
-	if (file.full_path) {
-		if (file.full_path.length > file_path.length) {
-			dir = file.full_path.substring(0, file.full_path.length - file_path.length);
-		} else {
-			dir = file.__dirname + '/';
-		}
-	}
-
-	while (dir) {
-		index = dir.lastIndexOf('/');
-		dir = (index !== -1) ? dir.substring(0, index - 1) : '';
-
-		absolute_path = path.resolve(basedir, dir, "node_modules", file_path);
-		if (fse.existsSync(absolute_path)) {
-			return absolute_path;
-		}
-	}
-
-	absolute_path = path.resolve(__dirname, file_path);
-	if (fse.existsSync(absolute_path)) {
-		return absolute_path;
-	}
-	console.log(absolute_path);
-	console.log(file);
-	process.exit();
+module.exports.set_basedir = (_basedir) => {
+	basedir               = _basedir;
+	base_node_modules     = path.join(basedir, "node_modules");
+	base_file_path_offset = basedir.length + 1;
 };
-*/

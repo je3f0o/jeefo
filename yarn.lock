@@ -14,16 +14,6 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-jeefo-event-dispatcher@0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/jeefo-event-dispatcher/-/jeefo-event-dispatcher-0.0.0.tgz#dbb07b0ed9d6a69a1ab7973883d4094eddf93724"
-
-jeefo-getopt@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/jeefo-getopt/-/jeefo-getopt-0.0.2.tgz#594be0acdc31e2f2b3ccdc4b8a95ca68b999eca5"
-  dependencies:
-    jeefo-event-dispatcher "0.0.0"
-
 jeefo_animate@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/jeefo_animate/-/jeefo_animate-0.0.3.tgz#3b948eb171d7b27fc40f311110072105569b4aef"
@@ -31,6 +21,10 @@ jeefo_animate@^0.0.3:
 jeefo_bootstrap@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/jeefo_bootstrap/-/jeefo_bootstrap-0.0.3.tgz#321d6905c8d5c316978b2afb8e497b762925d69c"
+
+jeefo_command@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/jeefo_command/-/jeefo_command-0.0.2.tgz#63f25e14325faaa714fd39d5c809c699239f2b42"
 
 jeefo_component@^0.0.4:
   version "0.0.4"
@@ -97,6 +91,10 @@ jeefo_utils@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/jeefo_utils/-/jeefo_utils-0.0.1.tgz#589c5e41a6c059ed7cf48798ee7185ff20e70905"
 
+jeefo_utils@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jeefo_utils/-/jeefo_utils-0.0.3.tgz#8840c46d20b23bf021793010d2b5939be9a6c206"
+
 jeefo_zone@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/jeefo_zone/-/jeefo_zone-0.0.2.tgz#5a36e1dd40702d9ad6c5852699fd4e1617acbcbd"
@@ -106,6 +104,10 @@ jsonfile@^3.0.0:
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-3.0.1.tgz#a5ecc6f65f53f662c4415c7675a0331d0992ec66"
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+moment@^2.18.1:
+  version "2.18.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
 universalify@^0.1.0:
   version "0.1.1"
