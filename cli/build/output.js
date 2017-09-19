@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : output.js
 * Created at  : 2017-08-08
-* Updated at  : 2017-09-02
+* Updated at  : 2017-09-19
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -49,9 +49,8 @@ module.exports = function compile (config) {
 	}
 
 	if (config.output) {
-		if (config.type === "app") {
-			build_app(config, contents);
-		}
+		// FIXME: later add build_app vs build_dll
+		build_app(config, contents);
 	}
 
 	if (config.cache_path) {
