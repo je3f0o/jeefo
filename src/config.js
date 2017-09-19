@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : config.js
 * Created at  : 2017-08-29
-* Updated at  : 2017-09-02
+* Updated at  : 2017-09-06
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -17,6 +17,7 @@ var path = require("path");
 
 module.exports = {
 	cache          : Object.create(null),
+	basedir        : process.cwd(),
 	requires       : [],
 	global_dir     : path.join(__dirname, ".."),
 	black_list     : {},

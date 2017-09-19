@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_register.js
 * Created at  : 2017-08-10
-* Updated at  : 2017-08-30
+* Updated at  : 2017-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :

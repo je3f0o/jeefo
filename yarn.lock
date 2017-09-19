@@ -18,17 +18,21 @@ jeefo_animate@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/jeefo_animate/-/jeefo_animate-0.0.3.tgz#3b948eb171d7b27fc40f311110072105569b4aef"
 
-jeefo_bootstrap@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/jeefo_bootstrap/-/jeefo_bootstrap-0.0.3.tgz#321d6905c8d5c316978b2afb8e497b762925d69c"
-
-jeefo_command@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/jeefo_command/-/jeefo_command-0.0.2.tgz#63f25e14325faaa714fd39d5c809c699239f2b42"
-
-jeefo_component@^0.0.4:
+jeefo_bootstrap@^0.0.4:
   version "0.0.4"
-  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.4.tgz#f3623a3d6116b429fdbeea550cd7d1346a706e00"
+  resolved "https://registry.yarnpkg.com/jeefo_bootstrap/-/jeefo_bootstrap-0.0.4.tgz#e7aba7782156174d5f0b641e7cb12515c97c9016"
+
+jeefo_command@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jeefo_command/-/jeefo_command-0.0.3.tgz#9a28f1340ae087740f748e7f8b9460fc6afd7d66"
+
+jeefo_component@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.10.tgz#9e5763fc424d1314e992d5df0f4e0fd8ca8c8936"
+
+jeefo_css_preprocessor@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/jeefo_css_preprocessor/-/jeefo_css_preprocessor-0.0.2.tgz#80d0db2f094e456695e51ad8ae6de39fcd110eef"
 
 jeefo_javascript_beautifier@^0.0.5:
   version "0.0.5"
@@ -40,17 +44,17 @@ jeefo_javascript_parser@^0.0.17:
   dependencies:
     jeefo_tokenizer "^0.0.29"
 
-jeefo_jqlite@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/jeefo_jqlite/-/jeefo_jqlite-0.0.2.tgz#519ba35b230195f150db3e667cd8ed5a82e28374"
+jeefo_jqlite@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jeefo_jqlite/-/jeefo_jqlite-0.0.3.tgz#b94e3cddd90c386b726312cfd3447e0ad93b75a8"
 
 jeefo_polyfill@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/jeefo_polyfill/-/jeefo_polyfill-0.0.1.tgz#2fbf79b24d32b88ac5afe9c8ecfcbc363b05ec57"
 
-jeefo_preprocessor@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/jeefo_preprocessor/-/jeefo_preprocessor-0.0.5.tgz#482c9b78c76ce55e9c34f39bc07106fb5078c795"
+jeefo_preprocessor@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/jeefo_preprocessor/-/jeefo_preprocessor-0.0.6.tgz#4138bb9ae1a3bcc371a6bc051e90e70179a28f80"
   dependencies:
     jeefo_javascript_beautifier "^0.0.5"
     jeefo_javascript_parser "^0.0.17"
@@ -67,15 +71,13 @@ jeefo_resource@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/jeefo_resource/-/jeefo_resource-0.0.2.tgz#63ae82ef278e3358d4df156fecbdcbbfaba7d1d3"
 
-jeefo_router@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.6.tgz#beff79871499b0c48f75df1afc1e8812211fdb06"
+jeefo_router@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.11.tgz#191a76292d2b6dcb7e175ad214715cb886aeaf78"
 
-jeefo_template@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/jeefo_template/-/jeefo_template-0.0.18.tgz#c8af33cc85be70ff149a931afa8530b3cc31cef9"
-  dependencies:
-    jeefo_tokenizer "^0.0.29"
+jeefo_template@^0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/jeefo_template/-/jeefo_template-0.0.20.tgz#b74c24a50254505c542e18215927c9a709af7c99"
 
 jeefo_timeout@^0.0.2:
   version "0.0.2"
@@ -91,9 +93,9 @@ jeefo_utils@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/jeefo_utils/-/jeefo_utils-0.0.1.tgz#589c5e41a6c059ed7cf48798ee7185ff20e70905"
 
-jeefo_utils@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/jeefo_utils/-/jeefo_utils-0.0.3.tgz#8840c46d20b23bf021793010d2b5939be9a6c206"
+jeefo_utils@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/jeefo_utils/-/jeefo_utils-0.0.4.tgz#9ef5f29aad7166b15dae9f8e3cd3b67cb07b84c5"
 
 jeefo_zone@^0.0.2:
   version "0.0.2"

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_directive.js
 * Created at  : 2017-08-10
-* Updated at  : 2017-08-31
+* Updated at  : 2017-09-02
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -14,7 +14,6 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:end
 
 var pp                    = require("jeefo_preprocessor").es6.clone(),
-	trim_lines            = require("./trim_lines"),
 	parse_controller      = require("./parse_controller"),
 	parse_directive_link  = require("./parse_directive_link"),
 	assignment_expression = pp.actions.handlers.AssignmentExpression;

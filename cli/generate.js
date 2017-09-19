@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : generate.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-01
+* Updated at  : 2017-09-06
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -62,14 +62,14 @@ var generate_state = function (name) {
 module.exports = {
 	name        : "generate",
 	aliases     : ['g'],
-    description : "Generates template files",
     options     : [
         { name: 'state'     , type: String , aliases: ['s'] } ,
         { name: 'service'   , type: String , aliases: ['S'] } ,
         { name: 'component' , type: String , aliases: ['c'] } ,
         { name: 'directive' , type: String , aliases: ['d'] } ,
     ],
-    run: function (options) {
+    description : "Generates template files",
+    run : function (options) {
 		if (options.state) {
 			generate_state(options.state);
 		}

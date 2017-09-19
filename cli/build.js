@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-02
+* Updated at  : 2017-09-07
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -13,15 +13,16 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 // ignore:end
 
-var fse          = require("fs-extra"),
-	path         = require("path"),
-	//util       = require("util"),
-	//colors     = require("./colors"),
-	parse        = require("../src/parser"),
-	config       = require("../src/config"),
-	output       = require("./build/output"),
-	load_cores   = require("./build/load_cores"),
-	path_resolve = require("../src/parser/path_resolver");
+var fse           = require("fs-extra"),
+	path          = require("path"),
+	//util        = require("util"),
+	//colors      = require("./colors"),
+	parse         = require("../src/parser"),
+	config        = require("../src/config"),
+	output        = require("./build/output"),
+	load_cores    = require("./build/load_cores"),
+	path_resolve  = require("../src/parser/path_resolver"),
+	parse_comment = require("../src/parser/parse_comment");
 
 var set_basedir = function (basedir) {
 	config.basedir = (basedir === "'.'") ? process.cwd() : path.resolve(basedir);
@@ -81,7 +82,9 @@ var set_config_file = function (file_path, options) {
 
 var pre_includes = function (pre_includes) {
 	pre_includes.forEach(filepath => {
-		config.pre_includes.push(fse.readFileSync(filepath, "utf8"));
+		var content = fse.readFileSync(filepath, "utf8");
+		content = parse_comment(content).trim();
+		config.pre_includes.push(content);
 	});
 };
 

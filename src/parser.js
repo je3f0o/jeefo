@@ -22,6 +22,7 @@ var pp             = require("jeefo_preprocessor").es6.clone(),
 	resolve_path   = require("./parser/path_resolver"),
 	parse_comment  = require("./parser/parse_comment"),
 	parse_register = require("./parser/parse_register"),
+	jeefo_template = require("jeefo_template"),
 	global_modules = config.global_modules,
 	cache, basedir;
 
@@ -30,6 +31,9 @@ var call_expression = pp.actions.handlers.CallExpression;
 pp.actions.handlers.TaggedTemplateLiteral = (_pp, token) => {
 	switch (token.tag.name) {
 		case "JT_PRE"     :
+			// TODO:
+			var r = trim_lines(_pp, token.template);
+			return _pp.replace(token, `'${ jeefo_template(r.value.slice(1, -1)) }'`);
 		case "TRIM_LINES" :
 			var replace = trim_lines(_pp, token.template);
 			return _pp.replace(token, replace.value);
