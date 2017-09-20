@@ -26,9 +26,9 @@ jeefo_command@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/jeefo_command/-/jeefo_command-0.0.3.tgz#9a28f1340ae087740f748e7f8b9460fc6afd7d66"
 
-jeefo_component@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.10.tgz#9e5763fc424d1314e992d5df0f4e0fd8ca8c8936"
+jeefo_component@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/jeefo_component/-/jeefo_component-0.0.11.tgz#629fb9f0ae7c180d04c8d758b6da391402a495a0"
 
 jeefo_css_preprocessor@^0.0.2:
   version "0.0.2"
@@ -71,9 +71,9 @@ jeefo_resource@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/jeefo_resource/-/jeefo_resource-0.0.2.tgz#63ae82ef278e3358d4df156fecbdcbbfaba7d1d3"
 
-jeefo_router@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.11.tgz#191a76292d2b6dcb7e175ad214715cb886aeaf78"
+jeefo_router@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/jeefo_router/-/jeefo_router-0.0.13.tgz#28ca236fee8637fab62daad750bd7982a25910ef"
 
 jeefo_template@^0.0.20:
   version "0.0.20"
