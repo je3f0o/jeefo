@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-07
+* Updated at  : 2017-09-25
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
@@ -51,8 +52,8 @@ var set_config_file = function (file_path, options) {
 
 	if (_config.output === false) {
 		options.output = false;
-	} else if (_config["output-directive"]) {
-		options["output-directive"] = _config["output-directive"];
+	} else if (_config["output-directory"]) {
+		options["output-directory"] = _config["output-directory"];
 	}
 
 	if (_config.pre_includes) {
@@ -81,7 +82,7 @@ var set_config_file = function (file_path, options) {
 };
 
 var pre_includes = function (pre_includes) {
-	pre_includes.forEach(filepath => {
+	pre_includes.forEach(function (filepath) {
 		var content = fse.readFileSync(filepath, "utf8");
 		content = parse_comment(content).trim();
 		config.pre_includes.push(content);

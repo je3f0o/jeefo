@@ -1,48 +1,28 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-* File Name   : parser.js
-* Created at  : 2016-11-26
-* Updated at  : 2017-09-21
+* File Name   : require_parser.js
+* Created at  : 2017-09-21
+* Updated at  : 2017-09-22
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
-/* global */
+/* globals */
 /* exported */
 
 // ignore:end
 
-var pp             = require("jeefo_preprocessor").es6.clone(),
-	fse            = require("fs-extra"),
-	path           = require("path"),
-	config         = require("./config"),
-	global_dir     = config.global_dir,
-	trim_lines     = require("./parser/trim_lines"),
-	resolve_path   = require("./parser/path_resolver"),
-	parse_comment  = require("./parser/parse_comment"),
-	parse_register = require("./parser/parse_register"),
-	jeefo_template = require("jeefo_template"),
-	global_modules = config.global_modules,
+var pp           = require("jeefo_preprocessor").es6.clone(),
+	fse          = require("fs-extra"),
+	path         = require("path"),
+	config       = require("../config"),
+	global_dir   = config.global_dir,
+	resolve_path = require("./path_resolver"),
 	cache, basedir;
 
 var call_expression = pp.actions.handlers.CallExpression;
-
-pp.actions.handlers.TaggedTemplateLiteral = function (_pp, token) {
-	switch (token.tag.name) {
-		case "JT_PRE"     :
-			// TODO:
-			var r = trim_lines(_pp, token.template);
-			return _pp.replace(token, `'${ jeefo_template(r.value.slice(1, -1)) }'`);
-		case "TRIM_LINES" :
-			var replace = trim_lines(_pp, token.template);
-			return _pp.replace(token, replace.value);
-		default:
-			console.log(_pp.code);
-			console.log(token);
-			process.exit();
-	}
-};
 
 pp.actions.handlers.CallExpression = function (_pp, token) {
 	var state    = _pp.state,
@@ -52,18 +32,24 @@ pp.actions.handlers.CallExpression = function (_pp, token) {
 		switch (token.arguments[0].type) {
 			case "StringLiteral" :
 				var file_path = token.arguments[0].value;
-				if (global_modules.indexOf(file_path) !== -1) {
+				if (file_path.charAt(0) !== '.') {
 					return;
 				}
 
-				var file = resolve_path(state.__dirname, file_path, state.is_global);
-				requires.push(file);
+				try {
+					var file = resolve_path(state.__dirname, file_path, state.is_global);
+					requires.push(file);
 
-				if (file.path !== file_path) {
-					return _pp.replace(token, `require("${ file.path }")`);
+					if (file.path !== file_path) {
+						return _pp.replace(token, `require("${ file.path }")`);
+					}
+				} catch (e) {
+					console.log(state);
 				}
 				break;
 			case "Identifier":
+			case "CallExpression":
+			case "TemplateLiteral":
 			case "MemberExpression":
 				break;
 			default:
@@ -97,10 +83,7 @@ var parse_requires = function (file, script) {
 		console.log(file);
 		process.exit();
 	}
-	//console.log(absolute_path);
 	file.content = pp.process(absolute_path, file.content);
-	file.content = parse_comment(file.content);
-	file.content = parse_register(file.path, file);
 
 	// Cache file
 	cache[file.path] = file;
@@ -113,9 +96,11 @@ var parse_requires = function (file, script) {
 	});
 };
 
-module.exports = function parser (file) {
-	cache   = config.cache;
+module.exports = function parser (file, _cache) {
+	cache   = _cache;
 	basedir = config.basedir;
 
 	parse_requires(file);
+
+	return _cache;
 };

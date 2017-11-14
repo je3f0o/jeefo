@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : path_resolver.js
 * Created at  : 2017-08-08
-* Updated at  : 2017-09-02
+* Updated at  : 2017-09-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -13,7 +13,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 // ignore:end
 
-let fse        = require("fs-extra"),
+var fse        = require("fs-extra"),
 	path       = require("path"),
 	config     = require("../config"),
 	global_dir = config.global_dir,
@@ -112,7 +112,7 @@ module.exports = function path_resolver (dirname, file_path, is_global) {
 		: parse_absolute_path(dirname, file_path);
 };
 
-module.exports.set_basedir = (_basedir) => {
+module.exports.set_basedir = function (_basedir) {
 	basedir               = _basedir;
 	base_node_modules     = path.join(basedir, "node_modules");
 	base_file_path_offset = basedir.length + 1;

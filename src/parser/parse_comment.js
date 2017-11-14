@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_comment.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-09-07
+* Updated at  : 2017-09-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,7 +15,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 var pp = require("jeefo_preprocessor").es6.clone();
 
-pp.actions.register("Comment", (_pp, token) => {
+pp.actions.register("Comment", function (_pp, token) {
 	switch (token.comment) {
 		case "ignore:start" :
 			_pp.state.ignore = {
@@ -34,7 +34,7 @@ pp.actions.register("Comment", (_pp, token) => {
 	}
 });
 
-module.exports = content => {
+module.exports = function (content) {
 	pp.state.ignore_actions = [];
 	pp.process("REPLACE ME FILENAME", content);
 

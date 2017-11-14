@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_service.js
 * Created at  : 2017-08-11
-* Updated at  : 2017-08-20
+* Updated at  : 2017-09-21
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -16,7 +16,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 var pp                    = require("jeefo_preprocessor").es6.clone(),
 	assignment_expression = pp.actions.handlers.AssignmentExpression;
 
-pp.actions.register("AssignmentExpression", (_pp, token) => {
+pp.actions.register("AssignmentExpression", function (_pp, token) {
 	if (token.left.type          === "MemberExpression" &&
 		token.left.object.type   === "Identifier" && token.left.object.name   === "module" &&
 		token.left.property.type === "Identifier" && token.left.property.name === "exports") {

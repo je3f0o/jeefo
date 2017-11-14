@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : output.js
 * Created at  : 2017-08-08
-* Updated at  : 2017-09-19
+* Updated at  : 2017-09-28
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
@@ -24,6 +25,7 @@ ${ config.pre_includes.join("\n\n") }
 
 ${ contents.build_code() }
 
+jeefo.require("node_modules/jeefo_zone/index.js");
 jeefo.require("${ config.main }");
 jeefo.require("node_modules/jeefo_bootstrap/index.js")(document);
 
@@ -59,7 +61,9 @@ module.exports = function compile (config) {
 			cache.pre_includes = config.pre_includes;
 		}
 
-		cache.entry_points = config.entry_points.map(file => file.path);
+		cache.entry_points = config.entry_points.map(function (file) {
+			return file.path;
+		});
 
 		fse.outputJsonSync(config.cache_path, cache, { spaces : 2 });
 	}
