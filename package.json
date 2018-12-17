@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "jeefo Front-end web application framework",
@@ -11,7 +11,9 @@
   "license": "MIT",
   "bin": "./bin/jeefo",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test" :"./node_modules/mocha/bin/mocha specs/**/*_specs.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/je3f0o/jeefo.git"
@@ -26,14 +28,15 @@
     "jeefo_bootstrap": "^0.0.5",
     "jeefo_command": "^0.0.4",
     "jeefo_component": "^0.0.12",
-    "jeefo_css_preprocessor": "^0.0.3",
+    "jeefo_css_preprocessor": "^0.0.4",
+    "jeefo_javascript_beautifier": "^0.0.5",
     "jeefo_javascript_parser": "^0.0.18",
     "jeefo_jqlite": "^0.0.3",
     "jeefo_polyfill": "^0.0.1",
-    "jeefo_preprocessor": "^0.0.6",
+    "jeefo_preprocessor": "^0.0.7",
     "jeefo_promise": "^0.0.3",
     "jeefo_q": "^0.0.2",
-    "jeefo_resource": "^0.0.3",
+    "jeefo_resource": "^0.0.4",
     "jeefo_router": "^0.0.14",
     "jeefo_template": "^0.0.20",
     "jeefo_timeout": "^0.0.2",
@@ -43,5 +46,8 @@
     "jeefo_zone": "^0.0.3",
     "moment": "^2.18.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "expect": "^23.6.0",
+    "mocha": "^5.2.0"
+  }
 }

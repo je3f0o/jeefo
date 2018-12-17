@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : path_resolver.js
 * Created at  : 2017-08-08
-* Updated at  : 2017-09-21
+* Updated at  : 2018-12-17
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
@@ -31,6 +32,8 @@ var resolve = function (paths) {
 				path      : paths[i].path.substring(paths[i].offset),
 				is_global : paths[i].is_global
 			};
+
+			file.path = path.normalize(file.path);
 
 			file.__dirname  = path.dirname(file.path);
 			file.__filename = path.basename(file.path);
@@ -58,8 +61,13 @@ var get_filenames = function (file_path) {
 };
 
 var add_path = function (paths, file_names, dirname, offset, is_global) {
-	var i = file_names.length;
+	var i = file_names.length, path_name;
 	while (i--) {
+		path_name = path.join(dirname, file_names[i]);
+		if (path_name.length < file_names[i].length) {
+			offset = 0;
+		}
+
 		paths.push({
 			path      : path.join(dirname, file_names[i]),
 			offset    : offset,

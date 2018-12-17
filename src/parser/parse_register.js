@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parse_register.js
 * Created at  : 2017-08-10
-* Updated at  : 2017-09-02
+* Updated at  : 2018-12-17
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
@@ -27,7 +28,7 @@ ${ file.content.trim() }
 module.exports = function (path, file) {
 	if (path.endsWith("_state.js")) {
 		parse_state(file);
-
+	
 		file.linker = `\n\njeefo.state("${ path }");`;
 	} else if (path.endsWith("_directive.js")) {
 		parse_directive(file);

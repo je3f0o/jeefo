@@ -1,19 +1,20 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : injector.js
 * Created at  : 2017-08-09
-* Updated at  : 2017-08-30
+* Updated at  : 2018-05-06
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals*/
 /* exported jeefo */
 
 // ignore:end
 
-var jeefo = window.jeefo = (function () {
+var jeefo = global.jeefo = (function () {
 	var states     = [],
 		modules    = Object.create(null),
 		factories  = Object.create(null),

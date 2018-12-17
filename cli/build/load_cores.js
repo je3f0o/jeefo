@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : load_cores.js
 * Created at  : 2017-08-29
-* Updated at  : 2017-09-21
+* Updated at  : 2018-05-06
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */

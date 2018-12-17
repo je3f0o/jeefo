@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-25
+* Updated at  : 2018-05-06
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -64,12 +64,22 @@ var set_config_file = function (file_path, options) {
 		options.post_includes = _config.post_includes;
 	}
 
+	if (_config.type === void 0) {
+		_config.type = "app";
+	}
+
 	switch (_config.type) {
 		case "app" :
 			options.type = "app";
 
-			if (_config["load-core-cache"] === false) {
-				options["load-core-cache"] = false;
+			if (_config.main) {
+				options.main = _config.main;
+			}
+
+			if (_config["load-core-cache"] === void 0) {
+				options["load-core-cache"] = true;
+			} else {
+				options["load-core-cache"] = !! _config["load-core-cache"];
 			}
 			break;
 		case "dll" :
@@ -208,7 +218,11 @@ module.exports = {
 		if (options.type === "app") {
 			// Set main
 			config.type = "app";
-			load_cores(config);
+
+			if (options["load-core-cache"]) {
+				load_cores();
+				config["load-core-cache"] = options["load-core-cache"];
+			}
 
 			var main    = path_resolve('.', `./${ options.main }`);
 			config.main = main.path;
@@ -219,7 +233,7 @@ module.exports = {
 			config.type = "dll";
 
 			options.files.forEach(function (file) {
-				file = path_resolve('.', file);
+				file = path_resolve('.', `./${ file }`);
 
 				parse(file);
 				config.entry_points.push(file);
