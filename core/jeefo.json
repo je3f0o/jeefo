@@ -3,11 +3,12 @@
 	"cache"        : true,
 	"output"       : false,
 	"pre_includes" : [ "injector.js" ],
+	"input-directory" : "..",
 	"files" : [
-		"jeefo/component",
-		"jeefo/router",
-		"jeefo/timeout",
-		"jeefo/zone",
-		"jeefo/bootstrap"
+		"node_modules/jeefo_component",
+		"node_modules/jeefo_router",
+		"node_modules/jeefo_timeout",
+		"node_modules/jeefo_zone",
+		"node_modules/jeefo_bootstrap"
 	]
 }

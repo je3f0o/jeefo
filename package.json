@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.34",
+  "version": "0.0.37",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "jeefo Front-end web application framework",
@@ -12,7 +12,7 @@
   "bin": "./bin/jeefo",
   "main": "index.js",
   "scripts": {
-    "test" :"./node_modules/mocha/bin/mocha specs/**/*_specs.js"
+    "test": "./node_modules/mocha/bin/mocha specs/**/*_specs.js"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
     "jeefo_javascript_parser": "^0.0.18",
     "jeefo_jqlite": "^0.0.3",
     "jeefo_polyfill": "^0.0.1",
-    "jeefo_preprocessor": "^0.0.7",
+    "jeefo_preprocessor": "^0.0.8",
     "jeefo_promise": "^0.0.3",
     "jeefo_q": "^0.0.2",
     "jeefo_resource": "^0.0.4",

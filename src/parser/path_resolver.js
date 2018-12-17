@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : path_resolver.js
 * Created at  : 2017-08-08
-* Updated at  : 2018-12-17
+* Updated at  : 2018-12-18
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -33,7 +33,7 @@ var resolve = function (paths) {
 				is_global : paths[i].is_global
 			};
 
-			file.path = path.normalize(file.path);
+			file.path = file.path.split('\\').join('/');
 
 			file.__dirname  = path.dirname(file.path);
 			file.__filename = path.basename(file.path);

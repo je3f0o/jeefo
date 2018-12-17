@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2017-09-01
-* Updated at  : 2018-05-06
+* Updated at  : 2018-12-17
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -31,12 +31,11 @@ var set_basedir = function (basedir) {
 };
 
 var set_config_file = function (file_path, options) {
-	if (options["input-directory"] === "'.'") {
-		file_path = path.join(process.cwd(), file_path);
-	} else {
-		file_path = path.resolve(options["input-directory"], file_path);
+	var _config = require(path.join(process.cwd(), file_path));
+
+	if (_config["input-directory"]) {
+		options["input-directory"] = path.resolve(_config["input-directory"]);
 	}
-	var _config = require(file_path);
 
 	if (_config.name) {
 		options.name = _config.name;
@@ -113,9 +112,9 @@ module.exports = {
 		},
 		// Cache
 		{
-			name    : "cache",
+			name    : "load-core-cache",
 			type    : Boolean,
-			default : false,
+			default : true,
 			aliases : ['c']
 		},
 		{

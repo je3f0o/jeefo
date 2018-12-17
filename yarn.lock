@@ -366,9 +366,10 @@ jeefo_polyfill@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/jeefo_polyfill/-/jeefo_polyfill-0.0.1.tgz#2fbf79b24d32b88ac5afe9c8ecfcbc363b05ec57"
 
-jeefo_preprocessor@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/jeefo_preprocessor/-/jeefo_preprocessor-0.0.7.tgz#c6a04bdce490f4b25c671d3a28bd68a1cc9a8ca9"
+jeefo_preprocessor@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/jeefo_preprocessor/-/jeefo_preprocessor-0.0.8.tgz#f4a574a462ac4880cf4bff3123e02e8717bcb836"
+  integrity sha512-WB6nT0RdUvkNEE6Ik5gFMR6BrXZgVzulpQ7Mq9whAirbXCRDNgFPHTuJ4AvuLqQp6qHVydqsSrWQ7jqhPVN/yA==
 
 jeefo_promise@^0.0.3:
   version "0.0.3"

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : parser.js
 * Created at  : 2016-11-26
-* Updated at  : 2018-10-19
+* Updated at  : 2018-12-17
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -50,9 +50,9 @@ pp.actions.handlers.CallExpression = function (_pp, token) {
 		requires = state.requires;
 
 	if (token.callee.type === "Identifier" && token.callee.name === "require") {
-		switch (token.parameters[0].type) {
+		switch (token["arguments"][0].type) {
 			case "StringLiteral" :
-				var file_path = token.parameters[0].value;
+				var file_path = token["arguments"][0].value;
 				if (global_modules.indexOf(file_path) !== -1) {
 					return;
 				}

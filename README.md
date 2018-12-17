@@ -1,5 +1,6 @@
 # jeefo
-Angular like Front-end web application
+AngularJS like Front-end web application framework created for my own personal 
+projects. Which looks very much like AngularJS, but works different inside.
 
 # Installation
 Install with NPM
