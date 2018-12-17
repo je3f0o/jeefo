@@ -30,7 +30,7 @@
     "jeefo_component": "^0.0.12",
     "jeefo_css_preprocessor": "^0.0.4",
     "jeefo_javascript_beautifier": "^0.0.5",
-    "jeefo_javascript_parser": "^0.0.18",
+    "jeefo_javascript_parser": "^0.0.20",
     "jeefo_jqlite": "^0.0.3",
     "jeefo_polyfill": "^0.0.1",
     "jeefo_preprocessor": "^0.0.8",

@@ -352,9 +352,10 @@ jeefo_javascript_beautifier@^0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/jeefo_javascript_beautifier/-/jeefo_javascript_beautifier-0.0.5.tgz#60c8a759fd8afdb1132898e36974699b87ed8855"
 
-jeefo_javascript_parser@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/jeefo_javascript_parser/-/jeefo_javascript_parser-0.0.18.tgz#8685e533f1d3d03ac951f66270275b3d9edd88f4"
+jeefo_javascript_parser@^0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/jeefo_javascript_parser/-/jeefo_javascript_parser-0.0.20.tgz#77e5b3f6905cc04137392122101523e5636703fe"
+  integrity sha512-rBOmHMxSpzes2muLGC7jjz8x03jNiChj7TeA/dPuJylloaILaC26YwqbHBDwSb1T15cnHGxdm9zFwMDE+zSZ2w==
   dependencies:
     jeefo_tokenizer "^0.0.29"
 
