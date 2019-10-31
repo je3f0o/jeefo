@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var exit            = require("jeefo_command/helpers/exit"),
-	style           = require("jeefo_command/src/misc/style"),
-	command_manager = require("../cli/cli");
+const exit            = require("@jeefo/command/helpers/exit");
+const style           = require("@jeefo/command/misc/style");
+const command_manager = require("../cli/cli");
 
 try {
 	command_manager.execute_commands(process.argv, 2);

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : print_command.js
 * Created at  : 2019-01-13
-* Updated at  : 2019-01-13
+* Updated at  : 2019-10-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -9,14 +9,14 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
 "use strict";
 
-/* globals */
-/* exported */
+/* globals*/
+/* exported*/
 
 // ignore:end
 
-const style                = require("jeefo_command/src/misc/style"),
-	  exit                 = require("jeefo_command/helpers/exit"),
-	  exit_required_option = require("jeefo_command/helpers/exit_required_option");
+const style                = require("@jeefo/command/misc/style"),
+	  exit                 = require("@jeefo/command/helpers/exit"),
+	  exit_required_option = require("@jeefo/command/helpers/exit_required_option");
 
 module.exports = {
 	name        : "print",

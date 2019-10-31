@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : help_command.js
 * Created at  : 2019-01-13
-* Updated at  : 2019-01-21
+* Updated at  : 2019-10-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -9,13 +9,13 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
 "use strict";
 
-/* globals */
-/* exported */
+/* globals*/
+/* exported*/
 
 // ignore:end
 
-const exit  = require("jeefo_command/helpers/exit"),
-	  style = require("jeefo_command/src/misc/style");
+const exit  = require("@jeefo/command/helpers/exit"),
+	  style = require("@jeefo/command/misc/style");
 
 module.exports = {
 	name        : "help",

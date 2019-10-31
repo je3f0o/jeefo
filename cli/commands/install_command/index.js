@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2019-01-10
-* Updated at  : 2019-01-18
+* Updated at  : 2019-10-31
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -9,14 +9,14 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
 "use strict";
 
-/* globals */
-/* exported */
+/* globals*/
+/* exported*/
 
 // ignore:end
 
 const fse                = require("fs-extra"),
 	  path               = require("path"),
-	  style              = require("jeefo_command/src/misc/style"),
+	  style              = require("@jeefo/command/misc/style"),
 	  waterfall          = require("async-waterfall"),
 	  { exec, execFile } = require('child_process');
 
@@ -36,7 +36,7 @@ module.exports = {
 		waterfall([
 			// {{{1 .bash_profile and auto-completion.sh
 			cb => {
-				// copy auto-completion.sh 
+				// copy auto-completion.sh
 				const AUTO_COMPLETION_FULL_PATH = path.join(process.env.HOME, AUTO_COMPLETION_PATH);
 				if (! fse.existsSync(AUTO_COMPLETION_FULL_PATH) || options.force) {
 					fse.copySync(path.join(__dirname, "auto-completion.sh"), AUTO_COMPLETION_FULL_PATH, {
@@ -61,7 +61,7 @@ module.exports = {
 					}
 				});
 			},
-			
+
 			// {{{1 jeefo_command.sh
 			cb => {
 				const JEEFO_COMMANDS_FULL_PATH = path.join(process.env.HOME, JEEFO_COMMANDS_PATH);
