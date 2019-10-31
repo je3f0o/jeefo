@@ -32,5 +32,7 @@ $ npm install jeefo -g
         - parser
             - command
             - tokenizer
+        - ecma_parser
+            - parser
 
 # License MIT

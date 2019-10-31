@@ -27,6 +27,7 @@
   "dependencies": {
     "@jeefo/audio": "0.0.1",
     "@jeefo/command": "0.0.1",
+    "@jeefo/ecma_parser": "0.0.1",
     "@jeefo/jqlite": "0.0.1",
     "@jeefo/material": "0.0.1",
     "@jeefo/math": "0.0.1",
