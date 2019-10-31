@@ -1,6 +1,11 @@
 # jeefo
-AngularJS like Front-end web application framework created for my own personal 
-projects. Which looks very much like AngularJS, but works different inside.
+Jeefo is a "ES8 Web Application Framework" written in NodeJS. Which has CLI or 
+Command Line tool Interface with many commands with many more options. In 
+Front-End side it has it's own templating language and Angular like framework 
+in common js pattern design. Which is very nice for NodeJS and Angular 
+developers. Because since Angular 2 they moved to TypeScript. So I wanted to 
+programm everything in same language. Which is one of the biggest reason to 
+create this framework. In Back-End it uses expressjs. (UNDER DEVELOPMENT)
 
 # Installation
 Install with NPM
@@ -8,10 +13,18 @@ Install with NPM
 $ npm install jeefo -g
 ```
 
-# API
-(coming soon...)
-
 # Documentation
 (coming soon...)
+
+# Inner dependency tree
+    - jeefo (root)
+        - math
+        - jqlite
+        - observer
+        - command
+            - parser
+        - utils
+            - tokenizer
+                - parser
 
 # License MIT

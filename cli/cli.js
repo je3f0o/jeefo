@@ -1,25 +1,31 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : cli.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-21
+* Updated at  : 2019-01-22
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
 
 // ignore:end
 
-var CLI = require("jeefo_command"),
-	cli = new CLI("jeefo");
+var JeefoCommandManager = require("jeefo_command"),
+	command_manager     = new JeefoCommandManager(require("../package").name);
 
-cli.register(require("./build"));
-cli.register(require("./generate"));
-cli.register(require("./generate_docs"));
-cli.register(require("./new"));
-cli.register(require("./help"));
+command_manager.register(require("./build"));
+command_manager.register(require("./generate"));
+command_manager.register(require("./new"));
 
-module.exports = cli;
+command_manager.register(require("./commands/generate_api_command"));
+
+command_manager.register(require("./commands/install_command"));
+command_manager.register(require("./commands/version_command"));
+command_manager.register(require("./commands/print_command"));
+command_manager.register(require("./commands/help_command"));
+
+module.exports = command_manager;

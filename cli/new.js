@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : new.js
 * Created at  : 2017-09-02
-* Updated at  : 2017-09-02
+* Updated at  : 2019-01-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -17,6 +17,6 @@ module.exports = {
 	name        : "new",
 	aliases     : ['n'],
     description : "Creates a new project",
-    run : function () {
+    execute : function () {
 	}
 };

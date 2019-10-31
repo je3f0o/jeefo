@@ -1,5 +1,26 @@
 #!/usr/bin/env node
 
-var jeefo = require("../index");
+var exit            = require("jeefo_command/helpers/exit"),
+	style           = require("jeefo_command/src/misc/style"),
+	command_manager = require("../cli/cli");
 
-jeefo();
+try {
+	command_manager.execute_commands(process.argv, 2);
+} catch (e) {
+	if (e.error_message === "not a valid command name") {
+		exit([
+			style("The specified ", "red"),
+			style(`'${ e.parameter_value }'`, "cyan"),
+			style(` command is not valid. For available commands, see \`${ command_manager.application_name } help\`.`, "red"),
+		].join(''));
+	} else if (e.function_name && e.function_name.endsWith("Option.initialize")) {
+		exit([
+			style("The specified ", "red"),
+			style(`'${ e.parameter_value }'`, "cyan"),
+			style(` option is not valid. For available options, see \`${ command_manager.application_name } help\`.`, "red"),
+		].join(''));
+	}
+	console.log(e.function_name);
+
+	throw e;
+}

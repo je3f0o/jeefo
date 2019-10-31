@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-* File Name   : index.js
-* Created at  : 2017-08-29
-* Updated at  : 2019-01-15
+* File Name   : exports_parser.js
+* Created at  : 2019-01-22
+* Updated at  : 2019-01-22
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -14,4 +14,6 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 // ignore:end
 
-module.exports = null;
+module.exports = function exports_parser (input_directory, files) {
+	return [];
+};

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : build.js
 * Created at  : 2017-09-01
-* Updated at  : 2018-12-17
+* Updated at  : 2019-01-13
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -78,7 +78,7 @@ var set_config_file = function (file_path, options) {
 			if (_config["load-core-cache"] === void 0) {
 				options["load-core-cache"] = true;
 			} else {
-				options["load-core-cache"] = !! _config["load-core-cache"];
+				options["load-core-cache"] = _config["load-core-cache"] === "true";
 			}
 			break;
 		case "dll" :
@@ -102,80 +102,90 @@ module.exports = {
 	name    : "build",
 	aliases : ['b'],
 	options : [
-		{ name : "main" , type : String , default : "main.js" , aliases : ['m'] } ,
+		// Main file
+		{
+			name    : "main",
+			type    : "File",
+			default : "index.js",
+			aliases : ['m']
+		} ,
 		// Type
 		{
 			name    : "type",
-			type    : ["app", "dll"],
+			type    : "enum",
+			list    : ["app", "dll"],
 			default : "app",
 			aliases : ['t'],
 		},
 		// Cache
 		{
 			name    : "load-core-cache",
-			type    : Boolean,
+			type    : "Boolean",
 			default : true,
-			aliases : ['c']
+			aliases : ['lcc']
 		},
 		{
 			name    : "cache-directory",
-			type    : String,
+			type    : "Directory",
 			default : ".jeefo",
 			aliases : ['cd']
 		},
 		// Output
 		{
 			name    : "output",
-			type    : Boolean,
+			type    : "Boolean",
 			default : true,
 			aliases : ['o']
 		},
 		{
 			name    : "output-directory",
-			type    : String,
+			type    : "Directory",
 			default : "dist",
 			aliases : ['od']
 		},
 		{
 			name        : "name",
-			type        : String,
+			type        : "String",
 			default     : "app",
 			aliases     : ['n'],
 			description : "Only used for when output is true."
 		},
 		// DLL entry point files
+		/*
 		{
 			name    : "files",
-			type    : Array,
+			type    : "Array",
 			aliases : ['f'],
 			description : "Only used for DLL(s)"
 		},
+		*/
 		// Input
 		{
 			name        : "input-directory",
-			type        : String,
-			default     : "'.'",
+			type        : "Directory",
+			default     : '.',
 			aliases     : ['i'],
 			description : "Default value '.' means current working directory."
 		},
 		// Config file
 		{
 			name        : "config-file",
-			type        : String,
+			type        : "File",
 			aliases     : ['cf'],
 			description : "WARNING! Config file overrides all options."
 		},
 		// Environment
 		{
 			name        : "environment"        ,
-			type        : ["dev", "development", "prod", "production"] ,
+			type        : "enum",
+			list        : ["dev", "development", "prod", "production"],
 			default     : "development",
 			aliases     : ['e'],
 			description : "dev, development and prod, production are identical."
 		},
 	],
     description : "Builds your App or DLL and places it into the output directory (dist/ by default).",
-    run : function (options) {
+    execute : function (options) {
 		// todo: override options
 		if (options["config-file"]) {
 			set_config_file(options["config-file"], options);
@@ -217,6 +227,10 @@ module.exports = {
 		if (options.type === "app") {
 			// Set main
 			config.type = "app";
+
+			if (typeof options["load-core-cache"] === "string") {
+				options["load-core-cache"] = options["load-core-cache"] === "true";
+			}
 
 			if (options["load-core-cache"]) {
 				load_cores();

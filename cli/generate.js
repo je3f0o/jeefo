@@ -1,12 +1,13 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : generate.js
 * Created at  : 2017-09-01
-* Updated at  : 2017-09-06
+* Updated at  : 2019-01-10
 * Author      : jeefo
 * Purpose     :
 * Description :
 _._._._._._._._._._._._._._._._._._._._._.*/
 // ignore:start
+"use strict";
 
 /* globals */
 /* exported */
@@ -63,13 +64,13 @@ module.exports = {
 	name        : "generate",
 	aliases     : ['g'],
     options     : [
-        { name: 'state'     , type: String , aliases: ['s'] } ,
-        { name: 'service'   , type: String , aliases: ['S'] } ,
-        { name: 'component' , type: String , aliases: ['c'] } ,
-        { name: 'directive' , type: String , aliases: ['d'] } ,
+        { name: 'state'     , type: "String" , aliases: ['s'] } ,
+        { name: 'service'   , type: "String" , aliases: ['S'] } ,
+        { name: 'component' , type: "String" , aliases: ['c'] } ,
+        { name: 'directive' , type: "String" , aliases: ['d'] } ,
     ],
     description : "Generates template files",
-    run : function (options) {
+    execute : function (options) {
 		if (options.state) {
 			generate_state(options.state);
 		}

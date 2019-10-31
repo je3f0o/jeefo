@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : generate_docs.js
 * Created at  : 2017-09-21
-* Updated at  : 2017-09-22
+* Updated at  : 2019-01-10
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -65,12 +65,12 @@ module.exports = {
 	name    : "generate-apis",
 	aliases : ['ga'],
 	options : [
-		{ name : "main"    , type : String , default : "index.js" , aliases : ['m'] } ,
-		{ name : "name"    , type : String , default : "unknown"  , aliases : ['n'] } ,
-		{ name : "version" , type : String , default : "0.0.0"    , aliases : ['v'] } ,
+		{ name : "main"    , type : "String" , default : "index.js" , aliases : ['m'] } ,
+		{ name : "name"    , type : "String" , default : "unknown"  , aliases : ['n'] } ,
+		{ name : "version" , type : "String" , default : "0.0.0"    , aliases : ['v'] } ,
 	],
     description : "Export documantations",
-    run : function (options) {
+    execute : function (options) {
 		var result = { API : [] };
 		var basedir = process.cwd();
 		path_resolve.set_basedir(basedir);

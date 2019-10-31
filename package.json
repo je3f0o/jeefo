@@ -1,9 +1,9 @@
 {
   "name": "jeefo",
-  "version": "0.0.38",
+  "version": "0.1.0",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
-  "description": "jeefo Front-end web application framework",
+  "description": "Full stack web application framework",
   "author": {
     "name": "je3f0o",
     "email": "je3f0o@gmail.com"
@@ -12,7 +12,8 @@
   "bin": "./bin/jeefo",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha specs/**/*_specs.js"
+    "save": "git add . && git c \"`date`\" && git p",
+    "test": "echo \"Not implemented.\""
   },
   "repository": {
     "type": "git",
@@ -20,34 +21,19 @@
   },
   "keywords": [
     "jeefo",
+    "je3f0o",
     "framework"
   ],
   "dependencies": {
-    "fs-extra": "^4.0.1",
-    "jeefo_animate": "^0.0.3",
-    "jeefo_bootstrap": "^0.0.5",
-    "jeefo_command": "^0.0.4",
-    "jeefo_component": "^0.0.12",
-    "jeefo_css_preprocessor": "^0.0.4",
-    "jeefo_javascript_beautifier": "^0.0.5",
-    "jeefo_javascript_parser": "^0.0.20",
-    "jeefo_jqlite": "^0.0.3",
-    "jeefo_polyfill": "^0.0.1",
-    "jeefo_preprocessor": "^0.0.8",
-    "jeefo_promise": "^0.0.3",
-    "jeefo_q": "^0.0.2",
-    "jeefo_resource": "^0.0.4",
-    "jeefo_router": "^0.0.14",
-    "jeefo_template": "^0.0.20",
-    "jeefo_timeout": "^0.0.2",
-    "jeefo_tokenizer": "^0.0.29",
-    "jeefo_url_matcher": "^0.0.1",
-    "jeefo_utils": "^0.0.5",
-    "jeefo_zone": "^0.0.3",
-    "moment": "^2.18.1"
+    "@jeefo/command": "0.0.1",
+    "@jeefo/jqlite": "0.0.1",
+    "@jeefo/math": "0.0.1",
+    "@jeefo/monkey_patcher": "0.0.1",
+    "@jeefo/observer": "0.0.1",
+    "@jeefo/parser": "0.0.21",
+    "@jeefo/resource": "0.0.2",
+    "@jeefo/tokenizer": "0.0.3",
+    "@jeefo/utils": "0.0.2"
   },
-  "devDependencies": {
-    "expect": "^23.6.0",
-    "mocha": "^5.2.0"
-  }
+  "devDependencies": {}
 }
