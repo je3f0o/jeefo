@@ -28,6 +28,7 @@
     "@jeefo/audio": "0.0.1",
     "@jeefo/command": "0.0.1",
     "@jeefo/jqlite": "0.0.1",
+    "@jeefo/material": "0.0.1",
     "@jeefo/math": "0.0.1",
     "@jeefo/monkey_patcher": "0.0.1",
     "@jeefo/observer": "0.0.1",
