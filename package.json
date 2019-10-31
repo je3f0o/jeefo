@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.42",
+  "version": "0.1.0",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "Full stack web application framework",
@@ -28,7 +28,7 @@
   "dependencies": {
     "@jeefo/audio": "0.0.1",
     "@jeefo/command": "0.0.3",
-    "@jeefo/component": "0.0.1",
+    "@jeefo/component": "0.0.2",
     "@jeefo/ecma_parser": "0.0.3",
     "@jeefo/jqlite": "0.0.1",
     "@jeefo/material": "0.0.1",
