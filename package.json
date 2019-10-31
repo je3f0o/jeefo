@@ -25,6 +25,7 @@
     "framework"
   ],
   "dependencies": {
+    "@jeefo/audio": "0.0.1",
     "@jeefo/command": "0.0.1",
     "@jeefo/jqlite": "0.0.1",
     "@jeefo/math": "0.0.1",
