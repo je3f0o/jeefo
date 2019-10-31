@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.0.40",
+  "version": "0.0.42",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "Full stack web application framework",
@@ -13,6 +13,7 @@
   "main": "index.js",
   "scripts": {
     "save": "git add . && git c \"`date`\" && git p",
+    "save_version": "git add . && git c \"v$npm_package_version\" && git p",
     "test": "echo \"Not implemented.\""
   },
   "repository": {
@@ -26,21 +27,21 @@
   ],
   "dependencies": {
     "@jeefo/audio": "0.0.1",
+    "@jeefo/command": "0.0.3",
     "@jeefo/component": "0.0.1",
-    "@jeefo/ecma_parser": "0.0.1",
+    "@jeefo/ecma_parser": "0.0.3",
     "@jeefo/jqlite": "0.0.1",
     "@jeefo/material": "0.0.1",
     "@jeefo/math": "0.0.1",
     "@jeefo/monkey_patcher": "0.0.1",
     "@jeefo/observer": "0.0.1",
-    "@jeefo/parser": "0.0.21",
+    "@jeefo/parser": "0.0.24",
     "@jeefo/resource": "0.0.2",
-    "@jeefo/tokenizer": "0.0.3",
-    "@jeefo/utils": "0.0.2",
+    "@jeefo/template": "0.0.1",
+    "@jeefo/tokenizer": "0.0.4",
+    "@jeefo/utils": "0.0.3",
     "async-waterfall": "^0.1.5",
     "fs-extra": "^8.1.0"
   },
-  "devDependencies": {
-    "@jeefo/command": "0.0.3"
-  }
+  "devDependencies": {}
 }
