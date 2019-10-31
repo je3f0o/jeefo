@@ -18,13 +18,19 @@ $ npm install jeefo -g
 
 # Inner dependency tree
     - jeefo (root)
+        - audio
+        - material
         - math
+        - monkey_patcher
         - jqlite
         - observer
+        - resource
         - command
-            - parser
         - utils
+        - tokenizer
+            - utils
+        - parser
+            - command
             - tokenizer
-                - parser
 
 # License MIT
