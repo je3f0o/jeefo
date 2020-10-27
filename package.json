@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.1.89",
+  "version": "0.1.90",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "Full stack web application framework. (under developing...)",
@@ -32,7 +32,7 @@
     "@jeefo/component": "0.0.11",
     "@jeefo/ecma_parser": "0.0.10",
     "@jeefo/form": "0.0.2",
-    "@jeefo/fs": "0.0.8",
+    "@jeefo/fs": "0.0.9",
     "@jeefo/javascript_preprocessor": "0.0.4",
     "@jeefo/jqlite": "0.0.6",
     "@jeefo/math": "0.0.1",
