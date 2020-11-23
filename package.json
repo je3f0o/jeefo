@@ -1,6 +1,6 @@
 {
   "name": "jeefo",
-  "version": "0.1.92",
+  "version": "0.1.93",
   "homepage": "https://github.com/je3f0o/jeefo",
   "copyright": "2017",
   "description": "Full stack web application framework. (under developing...)",
@@ -40,10 +40,10 @@
     "@jeefo/observer": "0.0.2",
     "@jeefo/parser": "0.0.27",
     "@jeefo/resource": "0.0.5",
-    "@jeefo/state": "0.0.8",
+    "@jeefo/state": "0.0.9",
     "@jeefo/template": "0.0.5",
     "@jeefo/tokenizer": "0.0.6",
-    "@jeefo/utils": "0.0.10",
+    "@jeefo/utils": "0.0.11",
     "async-waterfall": "^0.1.5",
     "fs-extra": "^8.1.0"
   },
