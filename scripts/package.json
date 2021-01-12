@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "dependencies": {
+    "@jeefo/fs": "^0.0.9"
+  }
+}
