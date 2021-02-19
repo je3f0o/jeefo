@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : app_bundler.js
 * Created at  : 2020-12-28
-* Updated at  : 2021-01-14
+* Updated at  : 2021-02-20
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -22,12 +22,11 @@ const jt           = require("@jeefo/template");
 const UglifyJS     = require("uglify-es");
 const JeefoBundler = require("@jeefo/bundler");
 //const cleaning_pp  = require("../lib/cleaning_pp");
+const config       = require("../../config");
 const preprocessor = require("../libs/preprocessor");
 
 const {
     npm_dir,
-    cache_dir,
-    frontend_dir,
     public_js_dir,
 } = require("../paths");
 
@@ -85,22 +84,7 @@ let bundler;
 async function get_bundler () {
     if (bundler) return bundler;
 
-    bundler = await new JeefoBundler({
-        name         : "app.min.js",
-        cache_dir    : `${cache_dir}/app`,
-        output_dir   : public_js_dir,
-        include_dirs : [frontend_dir],
-        node_modules : [
-            {
-                root_dir : path.normalize(`${process.cwd()}/..`),
-                packages : ["@jeefo/material"]
-            },
-            {
-                root_dir : '.',
-                packages : ["@jeefo"]
-            },
-        ],
-    });
+    bundler = await new JeefoBundler(config.app_bundler);
 
     bundler.on("file_updated", async module => {
         module.bundler      = bundler;
