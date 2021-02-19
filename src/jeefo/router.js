@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : router.js
 * Created at  : 2021-01-11
-* Updated at  : 2021-01-11
+* Updated at  : 2021-01-18
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,12 +15,12 @@
 
 // ignore:end
 
-const is       = require("@jeefo/utils/is");
-const {Router} = require("express");
+const is            = require("@jeefo/utils/is");
+const ExpressRouter = require("express").Router;
 
 const SLASHES_REGEX = /\/+/;
 
-const methods    = ["head", "get", "put", "post", "delete"];
+const methods    = ["HEAD", "GET", "PUT", "POST", "DELETE"];
 const black_list = ["module"];
 
 
@@ -194,16 +194,17 @@ class JeefoRouter {
     }
 
     to_express_router () {
-        const clone          = this.clone();
-        const express_router = new Router();
+        const core_api       = new JeefoRouter();
+        const express_router = new ExpressRouter();
 
         const router_names = ["module"];
 
         for (const name of router_names) {
-            clone.use("/api/v1", require(`../server/api/${name}_api`));
+            core_api.use("/api/v1", require(`../server/api/${name}_api`));
         }
 
-        for (const request of clone.api.requests) {
+        const merged_requests = core_api.api.requests.concat(this.api.requests);
+        for (const request of merged_requests) {
             const method   = request.method.toLowerCase();
             const handlers = request.get_handlers();
             handlers.unshift(request.path);

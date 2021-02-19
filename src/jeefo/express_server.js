@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : express_server.js
 * Created at  : 2020-12-24
-* Updated at  : 2021-01-11
+* Updated at  : 2021-01-18
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -81,8 +81,8 @@ class JeefoExpressServer extends EventEmitter {
 
             if (callback) callback(application);
 
-            application.use(router.to_express_router());
             application.use(express.static("public"));
+            application.use(router.to_express_router());
             application.use(require("./error_reporter"));
         });
 

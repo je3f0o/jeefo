@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : app_bundler.js
 * Created at  : 2020-12-28
-* Updated at  : 2021-01-11
+* Updated at  : 2021-01-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -92,9 +92,13 @@ async function get_bundler () {
         include_dirs : [frontend_dir],
         node_modules : [
             {
+                root_dir : path.normalize(`${process.cwd()}/..`),
+                packages : ["@jeefo/material"]
+            },
+            {
                 root_dir : '.',
                 packages : ["@jeefo"]
-            }
+            },
         ],
     });
 
