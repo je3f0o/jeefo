@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-08-29
-* Updated at  : 2021-01-11
+* Updated at  : 2021-04-13
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -31,7 +31,6 @@ if (require.main === module) {
     (async function main () {
         const jeefo    = new Jeefo();
         const {server} = jeefo;
-        await jeefo.initialize();
 
         server.on("http_listen", () => {
             const {port} = server.config.http;
@@ -43,6 +42,7 @@ if (require.main === module) {
             console.log(`Listening on: https://0.0.0.0:${port}`);
         });
 
+        await jeefo.initialize();
         jeefo.start();
     })().catch(e => {
         console.error("==================================================");

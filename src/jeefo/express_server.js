@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : express_server.js
 * Created at  : 2020-12-24
-* Updated at  : 2021-01-18
+* Updated at  : 2021-04-13
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -26,21 +26,27 @@ const JeefoRouter             = require("./router");
 const certs_manager           = require("./certificate_manager");
 const JeefoExpressApplication = require("./application");
 
+const default_ports = {
+    http  : 8080,
+    https : 8443,
+};
+
 const http_server_config_init = (type, instance, options) => {
     const readonly = new Readonly(instance);
 
     if (options === void 0) {
         readonly.prop("is_enabled", true);
-        readonly.prop("port", pkg.get(`config.${type}.port`));
-    } else if (options.is_enabled) {
+        const port = pkg.get(`config.${type}.port`);
+        readonly.prop("port", port || default_ports[type]);
+    } else if (options.is_enabled === false) {
+        readonly.prop("is_enabled", false);
+    } else {
         readonly.prop("is_enabled", true);
         if (is.number(options.port)) {
             readonly.prop("port", Math.floor(options.port % 0xFFFF));
         } else {
             throw new TypeError(`${type}.port number is a number.`);
         }
-    } else {
-        readonly.prop("is_enabled", false);
     }
 };
 
@@ -57,7 +63,7 @@ class HTTPS_ServerConfig {
 }
 
 class JeefoExpressServer extends EventEmitter {
-    constructor (options) {
+    constructor (options = {}) {
         super(true);
         const config      = {};
         const router      = new JeefoRouter();

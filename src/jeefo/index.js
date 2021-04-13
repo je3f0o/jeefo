@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2021-01-11
-* Updated at  : 2021-01-11
+* Updated at  : 2021-04-13
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -23,9 +23,9 @@ const JeefoRouter = require("./router");
 const version = pkg.get("version");
 
 class Jeefo {
-    constructor () {
+    constructor (options) {
         const readonly = new Readonly(this);
-        const server   = new Server(this);
+        const server   = new Server(options);
 
         readonly.prop("version" , version);
         readonly.prop("server"  , server);

@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : package.js
 * Created at  : 2021-01-11
-* Updated at  : 2021-01-11
+* Updated at  : 2021-04-13
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -15,11 +15,12 @@
 
 // ignore:end
 
-const fs       = require("fs");
-const path     = require("path");
-const Readonly = require("@jeefo/utils/object/readonly");
+const fs         = require("fs");
+const path       = require("path");
+const Readonly   = require("@jeefo/utils/object/readonly");
+const {root_dir} = require("../server/paths");
 
-const pkg_path = path.normalize(`${__dirname}/../package.json`);
+const pkg_path = path.normalize(`${root_dir}/package.json`);
 const pkg      = JSON.parse(fs.readFileSync(pkg_path, "utf8"));
 
 class JeefoPackage {
@@ -28,7 +29,11 @@ class JeefoPackage {
         readonly.prop("get", props => {
             let result = pkg;
             for (const p of props.split('.')) {
-                result = result[p];
+                if (p in result) {
+                    result = result[p];
+                } else {
+                    return null;
+                }
             }
             return result === pkg ? null : result;
         });
