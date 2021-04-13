@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : express_server.js
 * Created at  : 2020-12-24
-* Updated at  : 2021-04-13
+* Updated at  : 2021-04-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -77,6 +77,8 @@ class JeefoExpressServer extends EventEmitter {
         readonly.prop("config", config);
 
         readonly.prop("certificate_manager" , certs_manager);
+
+        readonly.prop("use", (...args) => application.use(...args));
 
         readonly.prop("initialize", async (callback) => {
             if (config.https.is_enabled) {
