@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : class_transpiler.js
 * Created at  : 2020-12-29
-* Updated at  : 2021-01-09
+* Updated at  : 2021-04-14
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -228,8 +228,10 @@ event_emitter.on("method", async function (event) {
         });
         let wrapper_tail = '';
         if (_class.has_heritage) {
-            const value  = `Object.create(${_class.super.name}.prototype)`;
-            wrapper_tail = `} ${_class._name}.prototype = ${value};`;
+            const value       = `Object.create(${_class.super.name}.prototype)`;
+            const proto       = `${_class._name}.prototype`;
+            const constructor = `${proto}.constructor = ${_class._name}`;
+            wrapper_tail = `} ${proto} = ${value}; ${constructor};`;
         }
         if (has_before_wrapped) {
             if (! wrapper_tail) wrapper_tail = '}';
@@ -380,6 +382,12 @@ event_emitter.on("class_expression", async function (event) {
         let class_head = `(function () {`;
         if (! has_constructor) {
             class_head += ` function ${node._name} () {}`;
+            if (node.has_heritage) {
+                const proto       = `${node._name}.prototype`;
+                const inheritance = `Object.create(${_super.name}.prototype)`;
+                class_head += ` ${proto} = ${inheritance};`;
+                class_head += ` ${proto}.constructor = ${node._name};`;
+            }
         }
 
         module.replacements.push({
@@ -459,6 +467,12 @@ event_emitter.on("class_declaration", async function (event) {
         let class_head = `var ${node._name} = (function () {`;
         if (! has_constructor) {
             class_head += ` function ${node._name} () {}`;
+            if (node.has_heritage) {
+                const proto       = `${node._name}.prototype`;
+                const inheritance = `Object.create(${_super.name}.prototype)`;
+                class_head += ` ${proto} = ${inheritance};`;
+                class_head += ` ${proto}.constructor = ${node._name};`;
+            }
         }
 
         module.replacements.push({
