@@ -1,6 +1,6 @@
 {
     "name": "jeefo",
-    "version": "0.2.14",
+    "version": "0.2.15",
     "homepage": "https://github.com/je3f0o/jeefo",
     "copyright": "2021",
     "description": "Full stack web application framework. (under developing...)",
@@ -31,7 +31,7 @@
         "@jeefo/form": "0.0.4",
         "@jeefo/fs": "^0.0.11",
         "@jeefo/javascript_preprocessor": "0.0.8",
-        "@jeefo/jqlite": "0.0.6",
+        "@jeefo/jqlite": "^0.0.7",
         "@jeefo/math": "^0.0.3",
         "@jeefo/monkey_patcher": "0.0.1",
         "@jeefo/observer": "0.0.2",
