@@ -29,18 +29,17 @@ const npm_dir = `${process.cwd()}/node_modules`;
 //const DEV_REGEX = /\/\/ DEV_LIBS_START[\s\S]+\/\/ DEV_LIBS_END/gm;
 //const DEBUG_REGEX = /\/\/ DEBUG_START[\s\S]+\/\/ DEBUG_END/gm;
 
-const template = `
+const template_header = `
 jeefo.register("__PATH__", async (exports, module) => {
 const __dirname = "__DIRNAME__", __filename = "__PATH__";
 const require = path => {
   return jeefo.require(path, __filename, __dirname);
-};
-__SOURCE__
+};`.split('\n').map(line => line.trim()).join(' ');
+
+const template_footer = `
 });
 //# sourceURL=__PATH__
-`.split('\n').map(line => {
-  return line.startsWith("//#") ? `\n${line}` : line.trim();
-}).join(' ');
+`;
 
 const wrap = module => {
   let {filepath, directory} = module.path.remote;
@@ -48,10 +47,14 @@ const wrap = module => {
     filepath  = `./${filepath}`;
     directory = `./${directory}`;
   }
-  module.content = template
-    .replace(/__PATH__/g, filepath)
-    .replace("__DIRNAME__", directory)
-    .replace("__SOURCE__", () => module.content);
+
+  module.content = [
+    template_header
+      .replace(/__PATH__/g, filepath)
+      .replace("__DIRNAME__", directory),
+    module.content,
+    template_footer.replace(/__PATH__/g, filepath),
+  ].join('');
 };
 
 const PLACEHOLDER_REGEX = /\/\*!([^\*]+)\*\//g;
