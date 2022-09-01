@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : index.js
 * Created at  : 2017-08-29
-* Updated at  : 2021-04-13
+* Updated at  : 2022-09-01
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -14,43 +14,31 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 // ignore:end
 
-// Prototype Pollution
-// Security patch for Object.prototype and properties
-const {prototype} = Object;
-const prop = "__proto__";
-const descriptor = Object.getOwnPropertyDescriptor(prototype, prop);
-descriptor.set = () => {};
-descriptor.configurable = false;
-Object.defineProperty(prototype, prop, descriptor);
+const jeefo_router  = require("./router");
+const jeefo_bundler = require("./bundler");
 
-const Jeefo = require("./jeefo");
+const pwd = process.cwd();
 
-module.exports = Jeefo;
+const cache_dir    = `${pwd}/.caches`;
+const frontend_dir = `${pwd}/frontend`;
+const public_js_dir = `${pwd}/public/js`;
 
-if (require.main === module) {
-    (async function main () {
-        const jeefo    = new Jeefo();
-        const {server} = jeefo;
+const default_config = {
+  name         : "app.min.js",
+  cache_dir    : `${cache_dir}/app`,
+  output_dir   : public_js_dir,
+  include_dirs : [frontend_dir],
+  node_modules : [
+    { root_dir : '.', packages : ["@jeefo"] },
+  ],
+};
 
-        server.on("http_listen", () => {
-            const {port} = server.config.http;
-            console.log(`Listening on: http://0.0.0.0:${port}`);
-        });
-
-        server.on("https_listen", () => {
-            const {port} = server.config.https;
-            console.log(`Listening on: https://0.0.0.0:${port}`);
-        });
-
-        await jeefo.initialize();
-        jeefo.start();
-    })().catch(e => {
-        console.error("==================================================");
-        console.error("| Unhandled Error |");
-        console.error("------------------+");
-        console.error(e);
-        console.error("==================================================");
-        console.error("");
-        console.error("");
-    });
-}
+module.exports = {
+  async create(config = {}) {
+    const {router} = config;
+    const bundler = await jeefo_bundler.create({...default_config, ...config});
+    const routes  = await jeefo_router.create(bundler);
+    if (router) for (const route of routes) router.register(...route);
+    return {bundler, routes};
+  }
+};

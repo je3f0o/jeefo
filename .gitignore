@@ -1,3 +1,7 @@
 # Node Modules
 node_modules
 src/.caches
+
+# Vim swap files
+*.swp
+*.swo

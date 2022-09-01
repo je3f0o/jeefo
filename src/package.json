@@ -1,6 +1,6 @@
 {
     "name": "jeefo",
-    "version": "0.2.11",
+    "version": "0.2.12",
     "homepage": "https://github.com/je3f0o/jeefo",
     "copyright": "2021",
     "description": "Full stack web application framework. (under developing...)",
@@ -24,25 +24,24 @@
         "framework"
     ],
     "dependencies": {
-        "@jeefo/bundler": "0.0.11",
+        "@jeefo/bundler": "^0.0.12",
         "@jeefo/command": "0.0.3",
         "@jeefo/component": "^0.0.19",
-        "@jeefo/ecma_parser": "0.0.10",
+        "@jeefo/ecma_parser": "^0.0.11",
         "@jeefo/form": "0.0.4",
-        "@jeefo/fs": "^0.0.10",
+        "@jeefo/fs": "^0.0.11",
         "@jeefo/javascript_preprocessor": "0.0.8",
         "@jeefo/jqlite": "0.0.6",
-        "@jeefo/math": "0.0.1",
+        "@jeefo/math": "^0.0.3",
         "@jeefo/monkey_patcher": "0.0.1",
         "@jeefo/observer": "0.0.2",
         "@jeefo/parser": "^0.0.28",
         "@jeefo/resource": "0.0.5",
         "@jeefo/state": "^0.0.14",
-        "@jeefo/template": "0.0.5",
+        "@jeefo/template": "^0.0.6",
         "@jeefo/tokenizer": "0.0.6",
-        "@jeefo/utils": "^0.0.12",
-        "express": "^4.17.1",
-        "sass": "^1.32.2",
+        "@jeefo/utils": "^0.0.18",
+        "sass": "^1.54.8",
         "uglify-es": "^3.3.9"
     }
 }
