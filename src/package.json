@@ -1,6 +1,6 @@
 {
     "name": "jeefo",
-    "version": "0.2.13",
+    "version": "0.2.14",
     "homepage": "https://github.com/je3f0o/jeefo",
     "copyright": "2021",
     "description": "Full stack web application framework. (under developing...)",
@@ -37,7 +37,7 @@
         "@jeefo/observer": "0.0.2",
         "@jeefo/parser": "^0.0.28",
         "@jeefo/resource": "0.0.5",
-        "@jeefo/state": "^0.0.14",
+        "@jeefo/state": "^0.0.15",
         "@jeefo/template": "^0.0.6",
         "@jeefo/tokenizer": "0.0.6",
         "@jeefo/utils": "^0.0.18",
