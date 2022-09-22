@@ -1,6 +1,6 @@
 {
     "name": "jeefo",
-    "version": "0.2.16",
+    "version": "0.2.17",
     "homepage": "https://github.com/je3f0o/jeefo",
     "copyright": "2021",
     "description": "Full stack web application framework. (under developing...)",
@@ -41,7 +41,7 @@
         "@jeefo/template": "^0.0.6",
         "@jeefo/tokenizer": "0.0.6",
         "@jeefo/utils": "^0.0.18",
-        "sass": "^1.54.8",
+        "sass": "^1.55.0",
         "uglify-es": "^3.3.9"
     }
 }

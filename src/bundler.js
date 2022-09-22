@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name   : bundler.js
 * Created at  : 2020-12-28
-* Updated at  : 2022-09-01
+* Updated at  : 2022-09-23
 * Author      : jeefo
 * Purpose     :
 * Description :
@@ -29,17 +29,18 @@ const npm_dir = `${process.cwd()}/node_modules`;
 //const DEV_REGEX = /\/\/ DEV_LIBS_START[\s\S]+\/\/ DEV_LIBS_END/gm;
 //const DEBUG_REGEX = /\/\/ DEBUG_START[\s\S]+\/\/ DEBUG_END/gm;
 
-const template_header = `
+const trim_lines = (str, delim = ' ') => (
+  str.split('\n').map(line => line.trim()).filter(Boolean).join(delim)
+);
+
+const template_header = trim_lines(`
 jeefo.register("__PATH__", async (exports, module) => {
 const __dirname = "__DIRNAME__", __filename = "__PATH__";
 const require = path => {
   return jeefo.require(path, __filename, __dirname);
-};`.split('\n').map(line => line.trim()).join(' ');
+};`);
 
-const template_footer = `
-});
-//# sourceURL=__PATH__
-`;
+const template_footer = "});\n//# sourceURL=__PATH__";
 
 const wrap = module => {
   let {filepath, directory} = module.path.remote;
@@ -123,11 +124,11 @@ async function create(config) {
 
     let core = await fs.readFile(core_filepath, "utf8");
     core     = core.replace('"use strict";', '');
-    data.content = `{\n${core}\n${data.content}\n}`;
+    data.content = `{\n${core}\n\n${data.content}\n}`;
 
     const result = UglifyJS.minify(data.content, {toplevel: true});
     if (result.error) throw result.error;
-    data.content = `{"use strict";${result.code.slice(1)}`;
+    data.content = `{"use strict";${result.code}}`;
   });
 
   return bundler;
